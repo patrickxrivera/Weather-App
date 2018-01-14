@@ -13,13 +13,18 @@
 .location-and-time-area {
   display: flex;
   justify-content: space-between;
-  padding-top: 1rem;
-  height: 10rem;
+  padding: 1rem 2rem 0;
+  height: 7rem;
   border: 1px solid orange;
 }
 
 .time-area {
-  text-align: center;
+  text-align: right;
+}
+
+.time-icon {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .nav-area {
@@ -27,20 +32,76 @@
   justify-content: space-between;
   align-items: center;
   text-transform: uppercase;
-}
-
-.nav-area > * {
-  min-width: 30%;
-  /* border: 2px solid blue; */
-  text-align: center;
+  padding: 1rem 0;
 }
 
 .nav-section-area {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 30%;
+  text-align: center;
 }
 
 .nav-section-mid-area {
   width: 0.5rem;
+}
+
+.weather-today-area {
+  height: 10rem;
+  border: 2px solid red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weather-today {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  border: 2px solid red;
+}
+
+.forecast-first-three,
+.forecast-last-two {
+  display: flex;
+  text-transform: uppercase;
+}
+
+.forecast-first-three {
+  justify-content: space-between;
+}
+
+.forecast-last-two {
+  justify-content: center;
+}
+
+.forecast-gutter {
+  width: 5%;
+}
+
+.forecast-area {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid blue;
+  align-items: center;
+  min-width: 30%;
+  min-height: 5rem;
+  justify-content: center;
+  padding: .75rem 0;
+}
+
+.forecast-area img {
+  padding: 0.5rem 0;
+}
+
+@media (min-width: 769px) {
+  .main-container {
+    width: 40%;
+    height: 90%;
+  }
+  .location-and-time-area {
+    padding: 1rem 1.5rem 0;
+  }
 }
