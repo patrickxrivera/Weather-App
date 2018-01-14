@@ -1,0 +1,46 @@
+/* Layouts */
+
+.main-container {
+  width: 95%;
+  margin: 0 auto;
+  border: 2px solid red;
+}
+
+.content-container {
+  padding: 0 1rem;
+}
+
+.location-and-time-area {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+  height: 10rem;
+  border: 1px solid orange;
+}
+
+.time-area {
+  text-align: center;
+}
+
+.nav-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: uppercase;
+}
+
+.nav-area > * {
+  min-width: 30%;
+  /* border: 2px solid blue; */
+  text-align: center;
+}
+
+.nav-section-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-section-mid-area {
+  width: 0.5rem;
+}
