@@ -69,6 +69,7 @@ function renderWeather(data) {
   tempEl.textContent = temp;
   cityEl.textContent = `${city}, `;
   countryEl.textContent = country;
+  renderCurrentWeatherIcons(data);
 }
 
 function renderForecast(data) {
@@ -79,10 +80,8 @@ function renderDays(data) {
   let fiveDayForecastData = getNextFiveDays(data);
   let dayNames = getDayNamesFrom(fiveDayForecastData);
   let avgTemps = getAvgTempsFrom(fiveDayForecastData);
-  let dayNamesClass = '.forecast-weekday';
-  let avgTempsClass = '.forecast-degrees';
-  renderForecasted(dayNames, dayNamesClass);
-  renderForecasted(avgTemps, avgTempsClass);
+  renderForecasted(dayNames, 'days');
+  renderForecasted(avgTemps, 'temps');
 }
 
 function getNextFiveDays(data) {
@@ -100,7 +99,9 @@ function getNextFiveDays(data) {
 
 function isTargetTime(forecast) {
   let date = new Date(forecast.dt * 1000);
-  return date.getHours() === 11 || date.getHours() === 12 || date.getHours() === 13;
+  return date.getHours() === 11 ||
+         date.getHours() === 12 ||
+         date.getHours() === 13;
 }
 
 function getDayNamesFrom(forecasts) {
@@ -124,11 +125,16 @@ function format(days) {
   return formattedDays;
 }
 
-function renderForecasted(data, targetClass) {
+function renderForecasted(data, type) {
+  let targetClass = getTargetClassFromData(type);
   let targetEls = document.querySelectorAll(targetClass);
   targetEls.forEach((targetEl, index) => {
     targetEl.textContent = data[index];
   });
+}
+
+function getTargetClassFromData(type) {
+  return type === 'days' ? '.forecast-weekday' : '.forecast-degrees';
 }
 
 function getAvgTempsFrom(forecasts) {
@@ -224,4 +230,40 @@ function renderDay(day) {
 function renderTime(time) {
   let timeEl = document.querySelector('.location-and-time-area .time-text');
   timeEl.textContent = time;
+}
+
+/* set styling */
+  // icons
+  // top bg color
+  // top font color
+
+// get main temp description
+// get time (day or night)
+// map main temp and time to icon name, class name, fonts, etc.
+
+function renderCurrentWeatherIcons(data) {
+  let weatherDescription = data.weather[0].description;
+  let hour = getHour();
+  let timeOfDay = hour > 7 || hour < 19 ? 'day' : 'night';
+  const iconObj = {
+    day: {
+      'clear sky': {
+        name: 'sun'
+      }
+    },
+    night: {
+      'clear sky': {
+        name: 'moon'
+      }
+    }
+  }
+  const weatherIconNavEl = document.querySelector('.nav-section-mid-area');
+  let iconName = iconObj[`${timeOfDay}`][`${weatherDescription}`].name;
+  let svg = feather.icons[iconName].toSvg( {class: 'sun'} );
+  weatherIconNavEl.insertAdjacentHTML('beforebegin', svg);
+}
+
+function getHour() {
+  let now = new Date();
+  return now.getHours();
 }
