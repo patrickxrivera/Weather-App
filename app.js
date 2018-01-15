@@ -76,22 +76,16 @@ function renderForecast(data) {
 }
 
 function renderDays(data) {
-  // get all data for next five days
-    // get just the names
-    // get just the average temp
-  // render forecasts
-    // names
-    // average temps
-
   let fiveDayForecastData = getNextFiveDays(data);
   let dayNames = getDayNamesFrom(fiveDayForecastData);
-  // let daysEl = document.querySelectorAll('.forecast-weekday');
-  // daysEl.forEach((dayEl, index) => {
-  //   dayEl.textContent = days[index];
-  // });
+  let avgTemps = getAvgTempsFrom(fiveDayForecastData);
+  let dayNamesClass = '.forecast-weekday';
+  let avgTempsClass = '.forecast-degrees';
+  renderForecasted(dayNames, dayNamesClass);
+  renderForecasted(avgTemps, avgTempsClass);
 }
 
-function getNextFiveDays(data) { // TODO - clean this guy up a bit :D
+function getNextFiveDays(data) {
   let forecastData = data.list
     .filter(forecast => {
       return isTargetTime(forecast);
@@ -109,22 +103,42 @@ function isTargetTime(forecast) {
   return date.getHours() === 11 || date.getHours() === 12 || date.getHours() === 13;
 }
 
-function getDayNamesFrom(data) {
-
+function getDayNamesFrom(forecasts) {
+  let days = [];
+  forecasts.forEach(forecast => {
+    let date = new Date(forecast.dt * 1000);
+    let day = getDay(date)
+    if (!days.includes(day)) {
+      days.push(day);
+    };
+  })
+  let formattedDays = format(days);
+  return formattedDays;
 }
 
-// function formatDays() {
-//   let date = new Date(forecast.dt * 1000);
-//   let day = getDay(date)
-//   if (!days.includes(day)) {
-//     days.push(day);
-//   };
-//   days.shift(); // get rid of current day
-//   let formattedDays = days.map(day => {
-//     return day.slice(0, 3).toUpperCase();
-//   })
-//   return formattedDays;
-// }
+function format(days) {
+  let formattedDays = days
+    .map(day => {
+      return day.slice(0, 3).toUpperCase();
+    })
+  return formattedDays;
+}
+
+function renderForecasted(data, targetClass) {
+  let targetEls = document.querySelectorAll(targetClass);
+  targetEls.forEach((targetEl, index) => {
+    targetEl.textContent = data[index];
+  });
+}
+
+function getAvgTempsFrom(forecasts) {
+  let avgTemps = forecasts
+    .map(forecast => {
+      let avgTemp = Math.round(forecast.main.temp);
+      return avgTemp;
+    })
+  return avgTemps;
+}
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
