@@ -15,34 +15,61 @@
   3) Animations
   4) toggle celsius and fahrenheit
 */
-// get current
 
-// API key => e7819a0645bb3723fbfe223ad074c870
-
-// console.log(currentWeatherUrl);
 function success(position) {
   let coords = position.coords;
   let lat = coords.latitude;
   let lon = coords.longitude;
-  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  let currentWeatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  forecastUrl = `${forecastUrl}&lat=${lat}&lon=${lon}`;
-  currentWeatherUrl = `${currentWeatherUrl}&lat=${lat}&lon=${lon}`;
-  const currentWeatherData = getCurrentWeatherData(currentWeatherUrl);
-
-  fetch(currentWeatherUrl)
-    .then(response => response.json())
-    .then(data => {
-      let currentWeatherEl = document.querySelector('.weather-today-degrees');
-      let windEl = document.querySelector('.weather-today-subtext');
-      let currentWeather = Math.round(data.main.temp);
-      let currentWind = Math.round(data.wind.speed);
-      windEl.textContent = `${currentWind}mph`;
-      currentWeatherEl.textContent = currentWeather;
-      console.log(data);
-    });
-
+  setWeather(lat, lon);
+  setForecast(lat, lon);
+  getData(lat, lon);
 };
+
+function getData(lat, lon) {
+}
+
+async function setWeather(lat, lon) {
+  let weatherData = await getWeatherData(lat, lon);
+  renderWeatherHTML(weatherData)
+}
+
+async function getWeatherData(lat, lon) {
+  let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  weatherUrl = `${weatherUrl}&lat=${lat}&lon=${lon}`;
+  let weatherData = await getJSON(weatherUrl);
+  return weatherData;
+}
+
+async function getJSON(url) {
+  try {
+    let response = await fetch(url);
+    let data = await response.json();
+    return data;
+  }
+  catch(err) {
+    console.warn('Error', e);
+  }
+}
+
+function renderWeatherHTML(data) {
+  let tempEl = document.querySelector('.weather-today-degrees');
+  let windEl = document.querySelector('.weather-today-subtext');
+  let temp = Math.round(data.main.temp);
+  let wind = Math.round(data.wind.speed);
+  windEl.textContent = `${wind}mph`;
+  tempEl.textContent = temp;
+}
+
+async function setForecast(lat, lon) {
+  let forecastData = await getForecastData(lat, lon);
+}
+
+async function getForecastData(lat, lon) {
+  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  forecastUrl = `${forecastUrl}&lat=${lat}&lon=${lon}`;
+  let forecastData = await getJSON(forecastUrl);
+  return forecastData;
+}
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
