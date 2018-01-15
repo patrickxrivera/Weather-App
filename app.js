@@ -22,12 +22,26 @@
 // console.log(currentWeatherUrl);
 function success(position) {
   let coords = position.coords;
-  let latitude = coors.latitude;
-  let longitude = coors.longitude;
-  let forecastUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  let currentWeatherUrl = 'http://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  forecastUrl = `${forecastUrl}&lat=${latitude}&lon=${longitude}`;
-  currentWeatherUrl = `${currentWeatherUrl}&lat=${latitude}&lon=${longitude}`;
+  let lat = coords.latitude;
+  let lon = coords.longitude;
+  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  let currentWeatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  forecastUrl = `${forecastUrl}&lat=${lat}&lon=${lon}`;
+  currentWeatherUrl = `${currentWeatherUrl}&lat=${lat}&lon=${lon}`;
+  const currentWeatherData = getCurrentWeatherData(currentWeatherUrl);
+
+  fetch(currentWeatherUrl)
+    .then(response => response.json())
+    .then(data => {
+      let currentWeatherEl = document.querySelector('.weather-today-degrees');
+      let windEl = document.querySelector('.weather-today-subtext');
+      let currentWeather = Math.round(data.main.temp);
+      let currentWind = Math.round(data.wind.speed);
+      windEl.textContent = `${currentWind}mph`;
+      currentWeatherEl.textContent = currentWeather;
+      console.log(data);
+    });
+
 };
 
 function error(err) {
