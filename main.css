@@ -1,9 +1,10 @@
 /* Layouts */
 
 .main-container {
-  width: 95%;
+  width: 70%;
   margin: 0 auto;
   border-radius: 0.25rem;
+  margin-top: 1rem;
 }
 
 .content-container {
@@ -13,7 +14,7 @@
 .location-and-time-area {
   display: flex;
   justify-content: space-between;
-  padding: 1rem 2rem 0;
+  padding: 1rem 0.7rem 0;
   height: 7rem;
 }
 
@@ -28,17 +29,17 @@
 
 .nav-area {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  flex-grow: 1;
   align-items: center;
   text-transform: uppercase;
-  padding: 1rem 0;
 }
 
 .nav-section-area {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 30%;
+  min-width: 33.3%;
   text-align: center;
 }
 
@@ -112,18 +113,93 @@
   padding: .75rem 0;
 }
 
-.forecast-area img {
+.forecast-area img,
+.forecast-area svg {
   padding: 0.5rem 0;
+}
+
+.cloud-rain line {
+  color: #408bdb;
 }
 
 @media (min-width: 769px) {
   .main-container {
-    width: 40%;
+    width: 30%;
     height: 90%;
+    margin-top: 1.5rem;
   }
   .location-and-time-area {
     padding: 1rem 1.5rem 0;
   }
+  .nav-section-area {
+    min-width: 32%;
+  }
 }
 
 /* Styling */
+
+body {
+  letter-spacing: 0.4px;
+  background-color: #eaf1f3;
+  font-family: 'Lato', serif;
+  color: #2c3e50;
+}
+
+.main-container {
+  border: 0 solid #eaf1f3;
+  border-radius: 0.5rem;
+  box-shadow: rgba(23,43,99,0.26) 0 7px 42px;
+}
+
+.location-and-time-area {
+  font-family: 'Lustria', serif;
+  font-weight: bold;
+}
+
+.location-and-time-area,
+.nav-area {
+  background-color: #fcf3d2;
+}
+
+.sun {
+  stroke: #de7c4d;
+}
+
+.nav-area {
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.nav-text {
+  opacity: 0.3;
+}
+
+.weather-today-weekday {
+  text-transform: uppercase;
+}
+
+.weather-today-area,
+.forecast-first-three,
+.forecast-last-two {
+  background-color: #fff;
+}
+
+.forecast-first-three,
+.forecast-last-two {
+  font-weight: bold;
+}
+
+.forecast-weekday {
+  background-color: rgba(189, 195, 199, 0.4);
+  border-radius: 0.25rem;
+  padding: 0.3rem;
+  font-size: 0.75rem;
+}
+
+.nav-area {
+  padding-bottom: 0.5rem;
+}
+
+.weather-today-weekday {
+  text-transform: none;
+}
