@@ -28,13 +28,13 @@ async function getCurrent(position) {
 async function setWeather(position) {
   let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
   let weatherData = await getData(position, weatherUrl);
-  renderWeatherHTML(weatherData);
-  console.log(weatherData);
+  renderWeather(weatherData);
 }
 
 async function setForecast(position) {
-  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-  let forecastData = await getData(position, forecastUrl);
+  let url = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let data = await getData(position, url);
+  renderForecast(data)
 }
 
 async function getData(position, url) {
@@ -56,7 +56,7 @@ async function getJSON(url) {
   }
 }
 
-function renderWeatherHTML(data) {
+function renderWeather(data) {
   let tempEl = document.querySelector('.weather-today-degrees');
   let windEl = document.querySelector('.weather-today-subtext');
   let cityEl = document.querySelector('.location-area .current-city');
@@ -69,6 +69,30 @@ function renderWeatherHTML(data) {
   tempEl.textContent = temp;
   cityEl.textContent = `${city}, `;
   countryEl.textContent = country;
+}
+
+function renderForecast(data) {
+  renderDays(data);
+}
+
+function renderDays(data) {
+  let days = getNextFiveDays(data);
+}
+
+function getNextFiveDays(data) {
+  let days = [];
+  data.list.forEach(forecast => {
+    let date = new Date(forecast.dt * 1000);
+    let day = getDay(date)
+    if (!days.includes(day)) {
+      days.push(day);
+    }
+  })
+  days.shift(); // get rid of current day
+  let formattedDays = days.map(day => {
+    return day.slice(0, 3).toUpperCase();
+  })
+  return formattedDays;
 }
 
 function error(err) {
