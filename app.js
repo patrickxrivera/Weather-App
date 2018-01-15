@@ -16,28 +16,29 @@
   4) toggle celsius and fahrenheit
 */
 
-function success(position) {
-  let coords = position.coords;
-  let lat = coords.latitude;
-  let lon = coords.longitude;
-  setWeather(lat, lon);
-  setForecast(lat, lon);
-  getData(lat, lon);
+async function getCurrent(position) {
+  setWeather(position);
+  setForecast(position);
 };
 
-function getData(lat, lon) {
+async function setWeather(position) {
+  let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let weatherData = await getData(position, weatherUrl);
+  renderWeatherHTML(weatherData);
+  console.log(weatherData);
 }
 
-async function setWeather(lat, lon) {
-  let weatherData = await getWeatherData(lat, lon);
-  renderWeatherHTML(weatherData)
+async function setForecast(position) {
+  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let forecastData = await getData(position, forecastUrl);
 }
 
-async function getWeatherData(lat, lon) {
-  let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  weatherUrl = `${weatherUrl}&lat=${lat}&lon=${lon}`;
-  let weatherData = await getJSON(weatherUrl);
-  return weatherData;
+async function getData(position, url) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
+  let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
+  let data = await getJSON(currentLocationUrl);
+  return data;
 }
 
 async function getJSON(url) {
@@ -54,27 +55,53 @@ async function getJSON(url) {
 function renderWeatherHTML(data) {
   let tempEl = document.querySelector('.weather-today-degrees');
   let windEl = document.querySelector('.weather-today-subtext');
+  let cityEl = document.querySelector('.location-area .current-city');
+  let countryEl = document.querySelector('.location-area .current-country');
   let temp = Math.round(data.main.temp);
   let wind = Math.round(data.wind.speed);
+  let city = data.name;
+  let country = data.sys.country;
+  console.log(country);
   windEl.textContent = `${wind}mph`;
   tempEl.textContent = temp;
-}
-
-async function setForecast(lat, lon) {
-  let forecastData = await getForecastData(lat, lon);
-}
-
-async function getForecastData(lat, lon) {
-  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
-  forecastUrl = `${forecastUrl}&lat=${lat}&lon=${lon}`;
-  let forecastData = await getJSON(forecastUrl);
-  return forecastData;
+  cityEl.textContent = `${city}, `;
+  countryEl.textContent = country;
 }
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
 };
 
-(function() {
-  navigator.geolocation.getCurrentPosition(success, error);
+
+(function() { // TODO
+  navigator.geolocation.getCurrentPosition(getCurrent, error);
 }());
+
+function addSuffixTo(date) {
+  let suffix;
+  let remainder = date % 10;
+
+  if (remainder === 1 && date !== 11) {
+    suffix = 'st';
+  }
+  else if (remainder === 2 && date !== 12) {
+    suffix = 'nd';
+  }
+  else if (remainder === 3 && date !== 13) {
+    suffix = 'rd';
+  }
+  else {
+    suffix = 'th';
+  }
+
+  return date + suffix;
+}
+
+(function() { // TODO
+  let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  let now = new Date();
+  let date = now.getDate();
+  let day = days[now.getDay()];
+  date = addSuffixTo(date);
+  console.log({date, day});
+}())
