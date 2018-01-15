@@ -76,24 +76,55 @@ function renderForecast(data) {
 }
 
 function renderDays(data) {
-  let days = getNextFiveDays(data);
+  // get all data for next five days
+    // get just the names
+    // get just the average temp
+  // render forecasts
+    // names
+    // average temps
+
+  let fiveDayForecastData = getNextFiveDays(data);
+  let dayNames = getDayNamesFrom(fiveDayForecastData);
+  // let daysEl = document.querySelectorAll('.forecast-weekday');
+  // daysEl.forEach((dayEl, index) => {
+  //   dayEl.textContent = days[index];
+  // });
 }
 
-function getNextFiveDays(data) {
-  let days = [];
-  data.list.forEach(forecast => {
-    let date = new Date(forecast.dt * 1000);
-    let day = getDay(date)
-    if (!days.includes(day)) {
-      days.push(day);
-    }
-  })
-  days.shift(); // get rid of current day
-  let formattedDays = days.map(day => {
-    return day.slice(0, 3).toUpperCase();
-  })
-  return formattedDays;
+function getNextFiveDays(data) { // TODO - clean this guy up a bit :D
+  let forecastData = data.list
+    .filter(forecast => {
+      return isTargetTime(forecast);
+    })
+
+  if (forecastData.length === 6) {
+    forecastData.shift();
+  }
+
+  return forecastData;
 }
+
+function isTargetTime(forecast) {
+  let date = new Date(forecast.dt * 1000);
+  return date.getHours() === 11 || date.getHours() === 12 || date.getHours() === 13;
+}
+
+function getDayNamesFrom(data) {
+
+}
+
+// function formatDays() {
+//   let date = new Date(forecast.dt * 1000);
+//   let day = getDay(date)
+//   if (!days.includes(day)) {
+//     days.push(day);
+//   };
+//   days.shift(); // get rid of current day
+//   let formattedDays = days.map(day => {
+//     return day.slice(0, 3).toUpperCase();
+//   })
+//   return formattedDays;
+// }
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
