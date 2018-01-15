@@ -81,8 +81,10 @@ function error(err) {
   let now = new Date();
   let date = getDate(now);
   let day = getDay(now);
+  let time = getTime(now)
   renderDate(date);
   renderDay(day);
+  renderTime(time);
 }())
 
 function getDate(now) {
@@ -97,6 +99,14 @@ function getDay(now) {
   return dayName;
 }
 
+function getTime(now) {
+  let time =
+    now
+      .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+      .toLowerCase();
+  return time;
+}
+
 function addSuffixTo(date) {
   let suffix = getSuffixOf(date);
   return date + suffix;
@@ -104,7 +114,6 @@ function addSuffixTo(date) {
 
 function getSuffixOf(date) {
   let suffix;
-
   let remainder = date % 10;
 
   if (remainder === 1 && date !== 11) {
@@ -131,4 +140,9 @@ function renderDate(date) {
 function renderDay(day) {
   let dayEl = document.querySelector('.weather-today-area .weather-today-weekday')
   dayEl.textContent = day;
+}
+
+function renderTime(time) {
+  let timeEl = document.querySelector('.location-and-time-area .time-text');
+  timeEl.textContent = time;
 }
