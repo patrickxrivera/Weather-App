@@ -16,6 +16,10 @@
   4) toggle celsius and fahrenheit
 */
 
+(function() { // TODO
+  navigator.geolocation.getCurrentPosition(getCurrent, error);
+}());
+
 async function getCurrent(position) {
   setWeather(position);
   setForecast(position);
@@ -61,7 +65,6 @@ function renderWeatherHTML(data) {
   let wind = Math.round(data.wind.speed);
   let city = data.name;
   let country = data.sys.country;
-  console.log(country);
   windEl.textContent = `${wind}mph`;
   tempEl.textContent = temp;
   cityEl.textContent = `${city}, `;
@@ -72,20 +75,27 @@ function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
 };
 
-
-(function() { // TODO
-  navigator.geolocation.getCurrentPosition(getCurrent, error);
-}());
-
 (function() { // TODO
   let now = new Date();
-  let date = getDate(now);
-  let day = getDay(now);
-  let time = getTime(now)
-  renderDate(date);
-  renderDay(day);
-  renderTime(time);
+  setDate(now);
+  setDay(now);
+  setTime(now);
 }())
+
+function setDate(now) {
+  let date = getDate(now);
+  renderDate(date);
+}
+
+function setDay(now) {
+  let day = getDay(now);
+  renderDay(day);
+}
+
+function setTime(now) {
+  let time = getTime(now);
+  renderTime(time);
+}
 
 function getDate(now) {
   let date = now.getDate();
