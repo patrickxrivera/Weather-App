@@ -77,8 +77,34 @@ function error(err) {
   navigator.geolocation.getCurrentPosition(getCurrent, error);
 }());
 
+(function() { // TODO
+  let now = new Date();
+  let date = getDate(now);
+  let day = getDay(now);
+  renderDate(date);
+  renderDay(day);
+}())
+
+function getDate(now) {
+  let date = now.getDate();
+  return addSuffixTo(date);
+}
+
+function getDay(now) {
+  let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  let dayNum = now.getDay();
+  let dayName = days[dayNum];
+  return dayName;
+}
+
 function addSuffixTo(date) {
+  let suffix = getSuffixOf(date);
+  return date + suffix;
+}
+
+function getSuffixOf(date) {
   let suffix;
+
   let remainder = date % 10;
 
   if (remainder === 1 && date !== 11) {
@@ -94,14 +120,15 @@ function addSuffixTo(date) {
     suffix = 'th';
   }
 
-  return date + suffix;
+  return suffix;
 }
 
-(function() { // TODO
-  let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  let now = new Date();
-  let date = now.getDate();
-  let day = days[now.getDay()];
-  date = addSuffixTo(date);
-  console.log({date, day});
-}())
+function renderDate(date) {
+  let dateEl = document.querySelector('.weather-today-area .weather-today-date')
+  dateEl.textContent = date;
+}
+
+function renderDay(day) {
+  let dayEl = document.querySelector('.weather-today-area .weather-today-weekday')
+  dayEl.textContent = day;
+}
