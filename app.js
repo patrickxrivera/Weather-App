@@ -92,7 +92,6 @@ function getNextFiveDays(data) {
     .filter(forecast => {
       return isTargetTime(forecast);
     })
-  console.log(forecastData);
   if (forecastData.length === 6) {
     forecastData.shift();
   }
@@ -249,15 +248,6 @@ function renderTime(time) {
   timeEl.textContent = time;
 }
 
-/* set styling */
-  // icons
-  // top bg color
-  // top font color
-
-// get main temp description
-// get time (day or night)
-// map main temp and time to icon name, class name, fonts, etc.
-
 const iconObj = {
   day: {
     'clear sky': 'sun',
@@ -291,7 +281,8 @@ function setWeatherIcons(data) {
 
 function getWeatherIcons(weatherDescription, timeOfDay) {
   let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
-  let svg = getSvgFrom(iconName);
+  let svg = getSvgFor(iconName);
+  setCardColors(iconName);
   renderNavIcon(svg);
   renderMainIcon(svg);
 }
@@ -317,7 +308,8 @@ function renderIconsFrom(forecasts) {
   targetEls.forEach((el, index) => {
     let currentWeatherDesc = weatherDescriptions[index];
     let iconName = getForecastIconNameFrom(currentWeatherDesc)
-    let svg = getSvgFrom(iconName);
+    // iconName = 'cloud-lightning';
+    let svg = getSvgFor(iconName);
     el.insertAdjacentHTML('beforebegin', svg);
   })
 }
@@ -333,13 +325,62 @@ function getForecastIconNameFrom(weatherDescription) {
   return iconObj.day[weatherDescription] ? iconObj.day[weatherDescription] : 'sun';
 }
 
-function getSvgFrom(iconName) {
+function setCardColors(iconName) { // TODO => better name and better way of initial call
+  let type; // TODO => name
+  let timeOfDay = getTimeOfDay();
+  if (timeOfDay === 'day') {
+    let typeObj = {
+      'sun': 'sunny',
+      'cloud': 'cloudy',
+      'cloud-rain': 'rainy',
+      'cloud-drizzle': 'rainy',
+      'cloud-lightning': 'cloudy',
+      'cloud-snow': 'cloudy'
+    };
+    type = typeObj[iconName];
+  }
+  else {
+    type = timeOfDay;
+  }
+  renderCardColors(type);
+};
+
+function renderCardColors(key) {
+  let cardColorsObj = {
+    night: {
+      primaryColor: '#fff',
+      secondaryColor: '#2c3e50'
+    },
+    sunny: {
+      primaryColor: '#2c3e50',
+      secondaryColor: '#fcf3d2'
+    },
+    cloudy: {
+      primaryColor: '#2c3e50',
+      secondaryColor: '#ecf0f1'
+    },
+    rainy: {
+      primaryColor: '#fff',
+      secondaryColor: '#3498db'
+    }
+  }
+  document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
+  document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+
+  let headerIconSvg = feather.icons.clock.toSvg();
+  let clockIconEl = document.querySelector('.location-and-time-area .time-icon');
+  clockIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
+  document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+}
+
+function getSvgFor(iconName) {
   return feather.icons[iconName].toSvg();
 }
 
 function getTimeOfDay() {
   let hour = getHour();
   return hour > 7 && hour < 19 ? 'day' : 'night';
+  // return 'night';
 }
 
 function getHour() {

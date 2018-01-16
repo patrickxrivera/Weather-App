@@ -125,8 +125,9 @@
   padding-left: 0.35rem;
 }
 
-.cloud-rain line {
-  color: #408bdb;
+.weather-today-area .feather-cloud-rain line,
+.forecast-area .feather-cloud-rain line {
+  color: #3498db;
 }
 
 @media (min-width: 769px) {
@@ -145,6 +146,11 @@
 
 /* Styling */
 
+:root {
+  --primaryColor: #2c3e50;
+  --secondaryColor: #fcf3d2;
+}
+
 body {
   letter-spacing: 0.4px;
   background-color: #eaf1f3;
@@ -161,14 +167,22 @@ body {
 .location-and-time-area {
   font-family: 'Lustria', serif;
   font-weight: bold;
+  color: var(--primaryColor);
 }
 
 .location-and-time-area,
 .nav-area {
-  background-color: #fcf3d2;
+  background-color: var(--secondaryColor);
 }
 
-.sun-day {
+.feather-clock,
+.nav-area .weather-area {
+  stroke: var(--primaryColor);
+  color: var(--primaryColor);
+}
+
+.weather-today-area .feather-sun,
+.forecast-area .feather-sun {
   stroke: #de7c4d;
 }
 
@@ -178,6 +192,7 @@ body {
 }
 
 .nav-text {
+  color: var(--primaryColor);
   opacity: 0.3;
 }
 
