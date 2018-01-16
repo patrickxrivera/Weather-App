@@ -69,7 +69,7 @@ function renderWeather(data) {
   tempEl.textContent = temp + degreesSymbol();
   cityEl.textContent = `${city}, `;
   countryEl.textContent = country;
-  renderCurrentWeatherIcons(data);
+  setWeatherIcons(data);
 }
 
 function renderForecast(data) {
@@ -260,49 +260,75 @@ const iconObj = {
     'mist': 'cloud-drizzle'
   },
   night: {
-    'clear sky': 'moon'
+    'clear sky': 'moon',
+    'few clouds': 'moon',
+    'scattered clouds': 'cloud',
+    'broken clouds': 'cloud',
+    'shower rain': 'cloud-rain',
+    'rain': 'cloud-drizzle',
+    'thunderstorm': 'cloud-lightning',
+    'snow': 'cloud-snow',
+    'mist': 'cloud-drizzle'
   }
 }
 
-function renderCurrentWeatherIcons(data) {
+function setWeatherIcons(data) {
   let weatherDescription = data.weather[0].description;
-  let hour = getHour();
-  let timeOfDay = hour > 7 && hour < 19 ? 'day' : 'night';
-  const weatherIconNavEl = document.querySelector('.nav-section-mid-area');
-  const weatherIconMain = document.querySelector('.weather-today-subtext');
-  let iconName;
+  let timeOfDay = getTimeOfDay();
+  getWeatherIcons(weatherDescription, timeOfDay);
+}
 
-  try {
-    iconName = iconObj[timeOfDay][weatherDescription];
-  }
-  catch (err) {
-    if (timeOfDay === 'day') {
-      iconName = 'sun';
-    }
-    else {
-      iconName = 'moon';
-    }
-  }
-  console.log(iconName);
-  let svg = feather.icons[iconName].toSvg( {class: `${iconName}-${timeOfDay}`} );
-  weatherIconNavEl.insertAdjacentHTML('beforebegin', svg);
-  weatherIconMain.insertAdjacentHTML('beforebegin', svg);
+function getWeatherIcons(weatherDescription, timeOfDay) {
+  let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
+  let svg = getSvgFrom(iconName);
+  renderNavIcon(svg);
+  renderMainIcon(svg);
+}
+
+function getWeatherIconNameFrom(weatherDescription, timeOfDay) {
+  return iconObj[timeOfDay][weatherDescription] ? iconObj[timeOfDay][weatherDescription] : 'sun';
+}
+
+function renderNavIcon(svg) {
+  const navIconEl = document.querySelector('.nav-section-mid-area');
+  navIconEl.insertAdjacentHTML('beforebegin', svg);
+}
+
+function renderMainIcon(svg) {
+  const mainIconEl = document.querySelector('.weather-today-subtext');
+  mainIconEl.insertAdjacentHTML('beforebegin', svg);
 }
 
 function renderIconsFrom(forecasts) {
-  let weatherDescriptions = forecasts
-    .map(forecast => {
-      return forecast.weather[0].description;
-    });
-
+  let weatherDescriptions = getWeatherDescriptionsFrom(forecasts);
   let targetEls = document.querySelectorAll('.forecast-degrees');
 
   targetEls.forEach((el, index) => {
     let currentWeatherDesc = weatherDescriptions[index];
-    let iconName = iconObj.day[currentWeatherDesc]
-    let svg = feather.icons[iconName].toSvg();
+    let iconName = getForecastIconNameFrom(currentWeatherDesc)
+    let svg = getSvgFrom(iconName);
     el.insertAdjacentHTML('beforebegin', svg);
   })
+}
+
+function getWeatherDescriptionsFrom(forecasts) {
+  return forecasts
+           .map(forecast => {
+             return forecast.weather[0].description;
+         });
+}
+
+function getForecastIconNameFrom(weatherDescription) {
+  return iconObj.day[weatherDescription] ? iconObj.day[weatherDescription] : 'sun';
+}
+
+function getSvgFrom(iconName) {
+  return feather.icons[iconName].toSvg();
+}
+
+function getTimeOfDay() {
+  let hour = getHour();
+  return hour > 7 && hour < 19 ? 'day' : 'night';
 }
 
 function getHour() {
