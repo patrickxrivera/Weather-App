@@ -66,7 +66,7 @@
   display: flex;
 }
 
-.weather-today-icon {
+.weather-today svg {
   height: 4.75rem;
   width: 4.75rem;
   flex-grow: 2;
@@ -82,6 +82,10 @@
 
 .weather-today-gutter {
   width: 1.5rem;
+}
+
+.weather-today-left-area {
+  padding-right: 1.75rem;
 }
 
 .forecast-first-three,
@@ -115,6 +119,10 @@
 .forecast-area img,
 .forecast-area svg {
   padding: 0.5rem 0;
+}
+
+.forecast-degrees {
+  padding-left: 0.35rem;
 }
 
 .cloud-rain line {
@@ -160,8 +168,12 @@ body {
   background-color: #fcf3d2;
 }
 
-.sun {
+.sun-day {
   stroke: #de7c4d;
+}
+
+.moon-night {
+  fill: #2c3e50;
 }
 
 .nav-area {

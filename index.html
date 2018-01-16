@@ -30,66 +30,18 @@
         <section class="nav-area">
 
           <div class="nav-section-area weather-area">
-            <svg class="sun"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </svg>
             <span class="nav-section-mid-area"></span>
             <span >Weather</span>
           </div>
 
           <div class="nav-section-area news-and-events-area">
-            <svg class="map nav-text"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
-              <line x1="8" y1="2" x2="8" y2="18" />
-              <line x1="16" y1="6" x2="16" y2="22" />
-            </svg>
+            <i data-feather="map" class="map nav-text"></i>
             <span class="nav-section-mid-area"></span>
             <span class="nav-text">News & Events</span>
           </div>
 
           <div class="nav-section-area gallery-area">
-            <svg class="camera nav-text"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
+            <i data-feather="camera" class="camera nav-text"></i>
             <span class="nav-section-mid-area"></span>
             <span class="nav-text">Gallery</span>
           </div>
@@ -99,140 +51,53 @@
         <section class="weather-today-area">
           <div class="center-experiment"> <!-- TODO -->
             <div class="weather-today"> <!-- TODO -->
-              <span class="weather-today-degrees">82</span>
-              <span>
-                <span class="weather-today-weekday">Sunday</span>
-                <span class="weather-today-date">14th</span>
+              <span class="weather-today-degrees"></span>
+              <span class="weather-today-left-area"> <!-- TODO -->
+                <span class="weather-today-weekday"></span>
+                <span class="weather-today-date"></span>
               </span>
             </div>
             <span class="weather-today-gutter"></span>
             <div class="weather-today"> <!-- TODO -->
-              <svg class="weather-today-icon sun"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-              <span class="weather-today-subtext">4mph</span>
+              <span class="weather-today-subtext"></span>
             </div>
           </div>
         </section>
 
         <section class="forecast-first-three">
           <div class="forecast-area"> <!-- TO DO -->
-            <span class="forecast-weekday">Tue</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-            </svg>
-            <span class="forecast-degrees">60</span>
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
           </div>
 
           <div class="forecast-area"> <!-- TO DO -->
-            <span class="forecast-weekday">Tue</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-            </svg>
-            <span class="forecast-degrees">60</span>
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
           </div>
 
           <div class="forecast-area"> <!-- TO DO -->
-            <span class="forecast-weekday">Tue</span>
-            <svg class="cloud-rain"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="16" y1="13" x2="16" y2="21" />
-              <line x1="8" y1="13" x2="8" y2="21" />
-              <line x1="12" y1="15" x2="12" y2="23" />
-              <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
-            </svg>
-            <span class="forecast-degrees">60</span>
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
           </div>
         </section>
 
         <section class="forecast-last-two">
 
           <div class="forecast-area"> <!-- TO DO -->
-            <span class="forecast-weekday">Tue</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-            </svg>
-            <span class="forecast-degrees">60</span>
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
           </div>
 
           <span class="forecast-gutter"></span>
 
           <div class="forecast-area"> <!-- TO DO -->
-            <span class="forecast-weekday">Tue</span>
-            <svg class="cloud-rain"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="16" y1="13" x2="16" y2="21" />
-              <line x1="8" y1="13" x2="8" y2="21" />
-              <line x1="12" y1="15" x2="12" y2="23" />
-              <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
-            </svg>
-            <span class="forecast-degrees">60</span>
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
           </div>
 
         </section>
@@ -242,6 +107,12 @@
     </div> <!-- main container -->
 
     <script src="app.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    <script>
+      feather.replace();
+    </script>
 
   </body>
 </html>
