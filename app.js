@@ -86,11 +86,13 @@ function renderDays(data) {
 }
 
 function getNextFiveDays(data) {
-  let forecastData = data.list
+  let forecastData =
+    data
+    .list
     .filter(forecast => {
       return isTargetTime(forecast);
     })
-
+  console.log(forecastData);
   if (forecastData.length === 6) {
     forecastData.shift();
   }
@@ -100,9 +102,17 @@ function getNextFiveDays(data) {
 
 function isTargetTime(forecast) {
   let date = new Date(forecast.dt * 1000);
-  return date.getHours() === 11 ||
-         date.getHours() === 12 ||
-         date.getHours() === 13;
+  let forecastHour = date.getHours();
+  let currentHour = getCurrentHour();
+  // TODO => think of a better way to get proper forecast dates and times
+  return forecastHour === currentHour ||
+         forecastHour === currentHour + 1 ||
+         forecastHour === currentHour + 2;
+}
+
+function getCurrentHour() {
+  let now = new Date();
+  return now.getHours();
 }
 
 function getDayNamesFrom(forecasts) {
@@ -119,7 +129,8 @@ function getDayNamesFrom(forecasts) {
 }
 
 function format(days) {
-  let formattedDays = days
+  let formattedDays =
+    days
     .map(day => {
       return day.slice(0, 3).toUpperCase();
     })
