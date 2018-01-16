@@ -149,6 +149,7 @@
 :root {
   --primaryColor: #2c3e50;
   --secondaryColor: #fcf3d2;
+  --toggleColor: #2c3e50;
 }
 
 body {
@@ -157,6 +158,121 @@ body {
   font-family: 'Lato', serif;
   color: #2c3e50;
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 90px;
+  height: 34px;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #7f8c8d;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--toggleColor);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: white;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(55px);
+  -ms-transform: translateX(55px);
+  transform: translateX(55px);
+}
+
+/*------ ADDED CSS ---------*/
+.on
+{
+  display: none;
+}
+
+.on, .off {
+  font-weight: bold;
+  color: var(--toggleColor);
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  /* font-size: 10px; */
+  /* font-family: Verdana, sans-serif; */
+}
+
+
+
+input:checked+ .slider .on
+{display: block;}
+
+input:checked + .slider .off
+{display: none;}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+  opacity: .9;
+}
+
+.slider.round:hover {
+  opacity: 1;;
+}
+
+/* @keyframes toggleHover {
+    0% {
+      opacity: 0.9
+    }
+    100% {
+      opacity: 1;
+      border: 1px solid #2c3e50;
+    }
+} */
+
+.slider.round:before {
+  border-radius: 50%;
+  /* opacity: 0.9 */
+}
+
+/* .slider.round:before:hover {
+  opacity: 1;
+} */
 
 .main-container {
   border: 0 solid #eaf1f3;

@@ -1,21 +1,3 @@
-// use resources from here to get openweather to work in CodePen
-// use navigator.geolocation method for geolocation
-
-/*
-  1) Get weather data from current location
-    // get current location
-    // make API call for current weather data
-    // Today - a) current weather, day of the week, day of the month, wind, weather type, city, state, time
-    // Forecast day of the week, weather type, average weather
-  2) Update styling based on weather type
-    // large current Weather
-    // small current weather
-    // 5-day forecast
-    // top-bg color, top font color
-  3) Animations
-  4) toggle celsius and fahrenheit
-*/
-
 (function() { // TODO
   navigator.geolocation.getCurrentPosition(getCurrent, error);
 }());
@@ -282,7 +264,7 @@ function setWeatherIcons(data) {
 function getWeatherIcons(weatherDescription, timeOfDay) {
   let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
   let svg = getSvgFor(iconName);
-  setCardColors(iconName);
+  setCardArea(iconName);
   renderNavIcon(svg);
   renderMainIcon(svg);
 }
@@ -325,27 +307,38 @@ function getForecastIconNameFrom(weatherDescription) {
   return iconObj.day[weatherDescription] ? iconObj.day[weatherDescription] : 'sun';
 }
 
-function setCardColors(iconName) { // TODO => better name and better way of initial call
-  let type; // TODO => name
+function setCardArea(iconName) { // TODO => better name
   let timeOfDay = getTimeOfDay();
+  let type = getTypeFrom(timeOfDay, iconName); // TODO => name
+  renderCardAreaFrom(type);
+};
+
+function getTypeFrom(timeOfDay, iconName) {
+  let typeObj = {
+    'sun': 'sunny',
+    'cloud': 'cloudy',
+    'cloud-rain': 'rainy',
+    'cloud-drizzle': 'rainy',
+    'cloud-lightning': 'cloudy',
+    'cloud-snow': 'cloudy'
+  };
+  let type; // TODO => name
+
   if (timeOfDay === 'day') {
-    let typeObj = {
-      'sun': 'sunny',
-      'cloud': 'cloudy',
-      'cloud-rain': 'rainy',
-      'cloud-drizzle': 'rainy',
-      'cloud-lightning': 'cloudy',
-      'cloud-snow': 'cloudy'
-    };
     type = typeObj[iconName];
   }
   else {
     type = timeOfDay;
   }
-  renderCardColors(type);
-};
+  return type;
+}
 
-function renderCardColors(key) {
+function renderCardAreaFrom(key) {
+  renderColorsUsing(key);
+  renderHeaderIcon();
+}
+
+function renderColorsUsing(key) {
   let cardColorsObj = {
     night: {
       primaryColor: '#fff',
@@ -366,11 +359,12 @@ function renderCardColors(key) {
   }
   document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
   document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+}
 
-  let headerIconSvg = feather.icons.clock.toSvg();
-  let clockIconEl = document.querySelector('.location-and-time-area .time-icon');
-  clockIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
-  document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+function renderHeaderIcon() {
+  let headerIconSvg = getSvgFor('clock');
+  let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
+  headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
 }
 
 function getSvgFor(iconName) {
@@ -380,7 +374,6 @@ function getSvgFor(iconName) {
 function getTimeOfDay() {
   let hour = getHour();
   return hour > 7 && hour < 19 ? 'day' : 'night';
-  // return 'night';
 }
 
 function getHour() {
