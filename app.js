@@ -1,16 +1,34 @@
-(function() { // TODO
+const slider = document.querySelector('.slider');
+let fahrenheit = true;
+let lat;
+let lon;
+let startPosition;
+
+function renderApp() { // TODO
   navigator.geolocation.getCurrentPosition(getCurrent, error);
-}());
+};
 
 async function getCurrent(position) {
+  startPosition = position;
   setWeather(position);
   setForecast(position);
 };
 
 async function setWeather(position) {
-  let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-  let weatherData = await getData(position, weatherUrl);
+  let url = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let data = await getData(position, url);
+  renderWeather(data);
+  setWeatherIcons(data);
+}
+
+async function toggleUnit() {
+  let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let unit;
+  fahrenheit ? unit = 'metric' : unit = 'imperial';
+  weatherUrl += `&units=${unit}`;
+  let weatherData = await getData(startPosition, weatherUrl);
   renderWeather(weatherData);
+  fahrenheit = !fahrenheit;
 }
 
 async function setForecast(position) {
@@ -20,8 +38,8 @@ async function setForecast(position) {
 }
 
 async function getData(position, url) {
-  let lat = position.coords.latitude;
-  let lon = position.coords.longitude;
+  lat = position.coords.latitude;
+  lon = position.coords.longitude;
   let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
   let data = await getJSON(currentLocationUrl);
   return data;
@@ -51,7 +69,6 @@ function renderWeather(data) {
   tempEl.textContent = temp + degreesSymbol();
   cityEl.textContent = `${city}, `;
   countryEl.textContent = country;
-  setWeatherIcons(data);
 }
 
 function renderForecast(data) {
@@ -380,3 +397,7 @@ function getHour() {
   let now = new Date();
   return now.getHours();
 }
+
+slider.addEventListener('click', toggleUnit);
+
+renderApp();
