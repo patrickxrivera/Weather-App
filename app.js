@@ -1,8 +1,11 @@
 const Helpers = {
-  degreesSymbol() {
+  weatherURL: 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
+  forecastURL: 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
+
+  getDegreesSymbol() {
     return String.fromCharCode(176);
   }
-}
+};
 
 const App = (function setupApp(){
   const iconObj = {
@@ -41,7 +44,7 @@ const App = (function setupApp(){
 
   // **************************
 
-  function initApp() { // TODO
+  function initApp() {
     bindUIActions();
     renderDateTime();
     navigator.geolocation.getCurrentPosition(getCurrent, error);
@@ -53,10 +56,11 @@ const App = (function setupApp(){
   }
 
   async function getCurrent(position) {
-    startPosition = position;
-    let data = Data(position);
-    data.setWeather();
-    // Icons.setWeather(position);
+    let weatherURL = Helpers.weatherURL;
+    let weatherCall = await APICall(position, weatherURL);
+    let weatherData = await weatherCall.getData();
+    let data = await Data();
+    data.renderCurrentWeather(weatherData);
     // setForecast(position);
   };
 
@@ -260,34 +264,6 @@ const App = (function setupApp(){
     timeEl.textContent = time;
   }
 
-  function setWeatherIcons(data) {
-    let weatherDescription = data.weather[0].description;
-    let timeOfDay = getTimeOfDay();
-    getWeatherIcons(weatherDescription, timeOfDay);
-  }
-
-  function getWeatherIcons(weatherDescription, timeOfDay) {
-    let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
-    let svg = getSvgFor(iconName);
-    setCardArea(iconName);
-    renderNavIcon(svg);
-    renderMainIcon(svg);
-  }
-
-  function getWeatherIconNameFrom(weatherDescription, timeOfDay) {
-    return iconObj[timeOfDay][weatherDescription] ? iconObj[timeOfDay][weatherDescription] : 'sun';
-  }
-
-  function renderNavIcon(svg) {
-    const navIconEl = document.querySelector('.nav-section-mid-area');
-    navIconEl.insertAdjacentHTML('beforebegin', svg);
-  }
-
-  function renderMainIcon(svg) {
-    const mainIconEl = document.querySelector('.weather-today-subtext');
-    mainIconEl.insertAdjacentHTML('beforebegin', svg);
-  }
-
   function renderIconsFrom(forecasts) {
     let weatherDescriptions = getWeatherDescriptionsFrom(forecasts);
     let targetEls = document.querySelectorAll('.forecast-degrees');
@@ -391,7 +367,7 @@ const App = (function setupApp(){
 // **************************
 // **************************
 
-async function Fetch(position, url) {
+async function APICall(position, url) { // TODO => improve Module name
   const publicAPI = {
     getData: getData,
     getJSON: getJSON
@@ -399,9 +375,11 @@ async function Fetch(position, url) {
 
   return publicAPI;
 
+  // **************************
+
   async function getData() {
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
     let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
     let data = await getJSON(currentLocationUrl);
     return data;
@@ -419,27 +397,27 @@ async function Fetch(position, url) {
   }
 }
 
-function Data(position) {
+// **************************
+// **************************
+
+async function Data(data) {
+  console.log(data);
   const publicAPI = {
-    setWeather: setWeather
+    renderCurrentWeather: renderCurrentWeather
   }
+
+  return publicAPI;
 
   // **************************
 
-  async function setWeather() {
-    let url = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-    let fetch = await Fetch(position, url);
-    let data = await fetch.getData();
-    renderWeather(data);
-  }
-
-  function renderWeather(data) {
+  async function renderCurrentWeather(data) { // TODO => modularize this function
+    console.log(data);
     let tempEl = document.querySelector('.weather-today-degrees');
     let windEl = document.querySelector('.weather-today-subtext');
     let cityEl = document.querySelector('.location-area .current-city');
     let countryEl = document.querySelector('.location-area .current-country');
-    let temp = Math.round(data.main.temp);
-    let wind = Math.round(data.wind.speed);
+    let temp = await Math.round(data.main.temp);
+    let wind = await Math.round(data.wind.speed);
     let city = data.name;
     let country = data.sys.country;
     windEl.textContent = `${wind}mph`;
@@ -447,17 +425,46 @@ function Data(position) {
     cityEl.textContent = `${city}, `;
     countryEl.textContent = country;
   }
-
-  return publicAPI;
 }
 
-function Icons() {
+function Icons(data) {
 
   const publicAPI = {
-    setWeather: setWeather
+    setCurrentWeather: setCurrentWeather
   }
 
   return publicAPI;
+
+  // **************************
+
+  function setCurrentWeather() {
+    let weatherDescription = data.weather[0].description;
+    let timeOfDay = getTimeOfDay();
+    getWeatherIcons(weatherDescription, timeOfDay);
+  }
+
+  function getWeatherIcons(weatherDescription, timeOfDay) {
+    let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
+    let svg = getSvgFor(iconName);
+    setCardArea(iconName);
+    renderNavIcon(svg);
+    renderMainIcon(svg);
+  }
+
+  function getWeatherIconNameFrom(weatherDescription, timeOfDay) {
+    return iconObj[timeOfDay][weatherDescription] ? iconObj[timeOfDay][weatherDescription] : 'sun';
+  }
+
+  function renderNavIcon(svg) {
+    const navIconEl = document.querySelector('.nav-section-mid-area');
+    navIconEl.insertAdjacentHTML('beforebegin', svg);
+  }
+
+  function renderMainIcon(svg) {
+    const mainIconEl = document.querySelector('.weather-today-subtext');
+    mainIconEl.insertAdjacentHTML('beforebegin', svg);
+  }
+
 }
 
 App.init();
