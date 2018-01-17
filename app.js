@@ -1,3 +1,9 @@
+const Helpers = {
+  degreesSymbol() {
+    return String.fromCharCode(176);
+  }
+}
+
 const App = (function setupApp(){
   const iconObj = {
     day: {
@@ -48,16 +54,11 @@ const App = (function setupApp(){
 
   async function getCurrent(position) {
     startPosition = position;
-    setWeather(position);
-    setForecast(position);
+    let data = Data(position);
+    data.setWeather();
+    // Icons.setWeather(position);
+    // setForecast(position);
   };
-
-  async function setWeather(position) {
-    let url = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-    let data = await getData(position, url);
-    renderWeather(data);
-    setWeatherIcons(data);
-  }
 
   async function toggleUnit() {
     let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
@@ -77,40 +78,6 @@ const App = (function setupApp(){
     let url = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
     let data = await getData(position, url);
     renderForecast(data)
-  }
-
-  async function getData(position, url) {
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
-    let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
-    let data = await getJSON(currentLocationUrl);
-    return data;
-  }
-
-  async function getJSON(url) {
-    try {
-      let response = await fetch(url);
-      let data = await response.json();
-      return data;
-    }
-    catch(err) {
-      console.warn('Error', e);
-    }
-  }
-
-  function renderWeather(data) {
-    let tempEl = document.querySelector('.weather-today-degrees');
-    let windEl = document.querySelector('.weather-today-subtext');
-    let cityEl = document.querySelector('.location-area .current-city');
-    let countryEl = document.querySelector('.location-area .current-country');
-    let temp = Math.round(data.main.temp);
-    let wind = Math.round(data.wind.speed);
-    let city = data.name;
-    let country = data.sys.country;
-    windEl.textContent = `${wind}mph`;
-    tempEl.textContent = temp + degreesSymbol();
-    cityEl.textContent = `${city}, `;
-    countryEl.textContent = country;
   }
 
   function renderForecast(data) {
@@ -189,7 +156,7 @@ const App = (function setupApp(){
     let targetClass = getTargetClassFromData(type);
     let targetEls = document.querySelectorAll(targetClass);
     targetEls.forEach((el, index) => {
-      let output = type === 'temps' ? data[index] + degreesSymbol() : data[index]; // TODO
+      let output = type === 'temps' ? data[index] + Helpers.getDegreesSymbol() : data[index]; // TODO
       el.textContent = output;
     });
   }
@@ -205,10 +172,6 @@ const App = (function setupApp(){
         return avgTemp;
       })
     return avgTemps;
-  }
-
-  function degreesSymbol() {
-    return String.fromCharCode(176);
   }
 
   function error(err) {
@@ -424,5 +387,77 @@ const App = (function setupApp(){
   }
 
 }());
+
+// **************************
+// **************************
+
+async function Fetch(position, url) {
+  const publicAPI = {
+    getData: getData,
+    getJSON: getJSON
+  }
+
+  return publicAPI;
+
+  async function getData() {
+    lat = position.coords.latitude;
+    lon = position.coords.longitude;
+    let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
+    let data = await getJSON(currentLocationUrl);
+    return data;
+  }
+
+  async function getJSON(url) {
+    try {
+      let response = await fetch(url);
+      let data = await response.json();
+      return data;
+    }
+    catch(err) {
+      console.warn('Error', e);
+    }
+  }
+}
+
+function Data(position) {
+  const publicAPI = {
+    setWeather: setWeather
+  }
+
+  // **************************
+
+  async function setWeather() {
+    let url = 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+    let fetch = await Fetch(position, url);
+    let data = await fetch.getData();
+    renderWeather(data);
+  }
+
+  function renderWeather(data) {
+    let tempEl = document.querySelector('.weather-today-degrees');
+    let windEl = document.querySelector('.weather-today-subtext');
+    let cityEl = document.querySelector('.location-area .current-city');
+    let countryEl = document.querySelector('.location-area .current-country');
+    let temp = Math.round(data.main.temp);
+    let wind = Math.round(data.wind.speed);
+    let city = data.name;
+    let country = data.sys.country;
+    windEl.textContent = `${wind}mph`;
+    tempEl.textContent = temp + Helpers.getDegreesSymbol();
+    cityEl.textContent = `${city}, `;
+    countryEl.textContent = country;
+  }
+
+  return publicAPI;
+}
+
+function Icons() {
+
+  const publicAPI = {
+    setWeather: setWeather
+  }
+
+  return publicAPI;
+}
 
 App.init();
