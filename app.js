@@ -55,15 +55,6 @@ const App = (function setupApp(){
     slider.addEventListener('click', toggleUnit);
   }
 
-  async function getCurrent(position) {
-    let weatherURL = Helpers.weatherURL;
-    let weatherCall = await APICall(position, weatherURL);
-    let weatherData = await weatherCall.getData();
-    let data = await Data();
-    data.renderCurrentWeather(weatherData);
-    // setForecast(position);
-  };
-
   async function toggleUnit() {
     let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
     let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
@@ -78,20 +69,26 @@ const App = (function setupApp(){
     fahrenheit = !fahrenheit;
   }
 
-  async function setForecast(position) {
-    let url = 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-    let data = await getData(position, url);
-    renderForecast(data)
+  async function getCurrent(position) {
+    let currentWeatherData = await getWeatherFrom(position, 'weatherURL');
+    let forecastData = await getWeatherFrom(position, 'forecastURL');
+    Data.renderCurrentWeather(currentWeatherData);
+    Data.renderForecastFrom(forecastData);
+
+    let fiveDayForecastDataTest = getNextFiveDays(forecastData);
+    renderDays(fiveDayForecastDataTest);
+    renderIconsFrom(fiveDayForecastDataTest)
+  };
+
+  async function getWeatherFrom(position, startUrl) {
+    let endUrl = Helpers[`${startUrl}`];
+    let call = await APICall(position, endUrl);
+    let data = await call.getData();
+    return data;
   }
 
-  function renderForecast(data) {
-    let fiveDayForecastData = getNextFiveDays(data);
-    renderDays(data);
-    renderIconsFrom(fiveDayForecastData);
-  }
-
-  function renderDays(data) {
-    let fiveDayForecastData = getNextFiveDays(data);
+  function renderDays(fiveDayForecastData) {
+    // let fiveDayForecastData = getNextFiveDays(data);
     let dayNames = getDayNamesFrom(fiveDayForecastData);
     let avgTemps = getAvgTempsFrom(fiveDayForecastData);
     renderForecasted(dayNames, 'days');
@@ -400,8 +397,7 @@ async function APICall(position, url) { // TODO => improve Module name
 // **************************
 // **************************
 
-async function Data(data) {
-  console.log(data);
+const UI = (function renderData() {
   const publicAPI = {
     renderCurrentWeather: renderCurrentWeather
   }
@@ -410,14 +406,13 @@ async function Data(data) {
 
   // **************************
 
-  async function renderCurrentWeather(data) { // TODO => modularize this function
-    console.log(data);
+  function renderCurrentWeather(data) { // TODO => modularize this function
     let tempEl = document.querySelector('.weather-today-degrees');
     let windEl = document.querySelector('.weather-today-subtext');
     let cityEl = document.querySelector('.location-area .current-city');
     let countryEl = document.querySelector('.location-area .current-country');
-    let temp = await Math.round(data.main.temp);
-    let wind = await Math.round(data.wind.speed);
+    let temp = Math.round(data.main.temp);
+    let wind = Math.round(data.wind.speed);
     let city = data.name;
     let country = data.sys.country;
     windEl.textContent = `${wind}mph`;
@@ -425,7 +420,7 @@ async function Data(data) {
     cityEl.textContent = `${city}, `;
     countryEl.textContent = country;
   }
-}
+}());
 
 function Icons(data) {
 
