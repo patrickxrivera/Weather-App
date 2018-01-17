@@ -1,12 +1,10 @@
 const slider = document.querySelector('.slider');
 let fahrenheit = true;
-let lat;
-let lon;
 let startPosition;
 
-function renderApp() { // TODO
+(function renderApp() { // TODO
   navigator.geolocation.getCurrentPosition(getCurrent, error);
-};
+}());
 
 async function getCurrent(position) {
   startPosition = position;
@@ -23,11 +21,15 @@ async function setWeather(position) {
 
 async function toggleUnit() {
   let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
+  let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
   let unit;
   fahrenheit ? unit = 'metric' : unit = 'imperial';
   weatherUrl += `&units=${unit}`;
+  forecastUrl += `&units=${unit}`;
   let weatherData = await getData(startPosition, weatherUrl);
+  let forecastData = await getData(startPosition, forecastUrl);
   renderWeather(weatherData);
+  renderDays(forecastData);
   fahrenheit = !fahrenheit;
 }
 
@@ -72,7 +74,9 @@ function renderWeather(data) {
 }
 
 function renderForecast(data) {
+  let fiveDayForecastData = getNextFiveDays(data);
   renderDays(data);
+  renderIconsFrom(fiveDayForecastData);
 }
 
 function renderDays(data) {
@@ -81,7 +85,6 @@ function renderDays(data) {
   let avgTemps = getAvgTempsFrom(fiveDayForecastData);
   renderForecasted(dayNames, 'days');
   renderForecasted(avgTemps, 'temps');
-  renderIconsFrom(fiveDayForecastData);
 }
 
 function getNextFiveDays(data) {
@@ -91,6 +94,7 @@ function getNextFiveDays(data) {
     .filter(forecast => {
       return isTargetTime(forecast);
     })
+
   if (forecastData.length === 6) {
     forecastData.shift();
   }
@@ -99,13 +103,17 @@ function getNextFiveDays(data) {
 }
 
 function isTargetTime(forecast) {
+  // TODO => think of a better way to get proper forecast dates and times
   let date = new Date(forecast.dt * 1000);
   let forecastHour = date.getHours();
   let currentHour = getCurrentHour();
-  // TODO => think of a better way to get proper forecast dates and times
-  return forecastHour === currentHour ||
-         forecastHour === currentHour + 1 ||
-         forecastHour === currentHour + 2;
+  let currentHourAdjusted = currentHour + 3;
+
+  if (currentHourAdjusted > 23) {
+    currentHourAdjusted -= 24;
+  }
+
+  return forecastHour === currentHourAdjusted;
 }
 
 function getCurrentHour() {
@@ -399,5 +407,3 @@ function getHour() {
 }
 
 slider.addEventListener('click', toggleUnit);
-
-renderApp();
