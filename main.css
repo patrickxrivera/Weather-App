@@ -341,3 +341,13 @@ input:checked + .slider .off
 .weather-today-weekday {
   text-transform: none;
 }
+
+/* Animations */
+
+.fadeInLeft {
+  animation-duration: 0.4s;
+}
+
+.fadeIn {
+  animation: 1.4s ease-in 0.6s;
+}

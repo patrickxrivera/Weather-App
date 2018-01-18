@@ -60,6 +60,7 @@ const App = (function setupApp(){
     Data.renderForecastFrom(forecastData);
     Icons.renderWeatherIconsFrom(currentWeatherData);
     Icons.renderForecastIconsFrom(forecastData);
+    Animations.run();
   };
 
   async function getWeatherFrom(position, startURL, unit) {
@@ -504,6 +505,29 @@ const DateTime = (function setupDateTime() {
   }
 
 }());
+
+// **************************
+// **************************
+
+const Animations = (function() {
+
+  const publicAPI = {
+    run: run
+  }
+
+  return publicAPI;
+
+  // **************************
+
+  function run() {
+    const currentWeatherArea = document.querySelector('.center-experiment');
+    const forecastArea = document.querySelectorAll('.forecast-area');
+    currentWeatherArea.classList.add('animated', 'fadeInLeft');
+    forecastArea.forEach(el => {
+      el.classList.add('animated', 'fadeIn');
+    })
+  }
+}())
 
 // **************************
 // **************************
