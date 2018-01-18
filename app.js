@@ -4,40 +4,26 @@ const Helpers = {
 
   getDegreesSymbol() {
     return String.fromCharCode(176);
+  },
+  getTimeOfDay() {
+    let hour = this.getHour();
+    return hour > 7 && hour < 19 ? 'day' : 'night';
+  },
+  getHour() {
+    let now = new Date();
+    return now.getHours();
+  },
+  getSvgFor(iconName) {
+    return feather.icons[iconName].toSvg();
   }
 };
 
 const App = (function setupApp(){
-  const iconObj = {
-    day: {
-      'clear sky': 'sun',
-      'few clouds': 'sun',
-      'scattered clouds': 'cloud',
-      'broken clouds': 'cloud',
-      'shower rain': 'cloud-rain',
-      'rain': 'cloud-drizzle',
-      'thunderstorm': 'cloud-lightning',
-      'snow': 'cloud-snow',
-      'mist': 'cloud-drizzle'
-    },
-    night: {
-      'clear sky': 'moon',
-      'few clouds': 'moon',
-      'scattered clouds': 'cloud',
-      'broken clouds': 'cloud',
-      'shower rain': 'cloud-rain',
-      'rain': 'cloud-drizzle',
-      'thunderstorm': 'cloud-lightning',
-      'snow': 'cloud-snow',
-      'mist': 'cloud-drizzle'
-    }
-  }
   let fahrenheit = true;
   let startPosition;
 
   const publicAPI = {
     init: initApp,
-    renderDateTime: renderDateTime,
   }
 
   return publicAPI;
@@ -46,7 +32,7 @@ const App = (function setupApp(){
 
   function initApp() {
     bindUIActions();
-    renderDateTime();
+    DateTime.renderDateTime();
     navigator.geolocation.getCurrentPosition(getCurrent, error);
   };
 
@@ -72,12 +58,10 @@ const App = (function setupApp(){
   async function getCurrent(position) {
     let currentWeatherData = await getWeatherFrom(position, 'weatherURL');
     let forecastData = await getWeatherFrom(position, 'forecastURL');
-    Data.renderCurrentWeather(currentWeatherData);
+    Data.renderWeatherFrom(currentWeatherData);
     Data.renderForecastFrom(forecastData);
-
-    let fiveDayForecastDataTest = getNextFiveDays(forecastData);
-    renderDays(fiveDayForecastDataTest);
-    renderIconsFrom(fiveDayForecastDataTest)
+    Icons.renderWeatherIconsFrom(currentWeatherData);
+    Icons.renderForecastIconsFrom(forecastData);
   };
 
   async function getWeatherFrom(position, startUrl) {
@@ -87,97 +71,84 @@ const App = (function setupApp(){
     return data;
   }
 
-  function renderDays(fiveDayForecastData) {
-    // let fiveDayForecastData = getNextFiveDays(data);
-    let dayNames = getDayNamesFrom(fiveDayForecastData);
-    let avgTemps = getAvgTempsFrom(fiveDayForecastData);
-    renderForecasted(dayNames, 'days');
-    renderForecasted(avgTemps, 'temps');
-  }
-
-  function getNextFiveDays(data) {
-    let forecastData =
-      data
-      .list
-      .filter(forecast => {
-        return isTargetTime(forecast);
-      })
-
-    if (forecastData.length === 6) {
-      forecastData.shift();
-    }
-
-    return forecastData;
-  }
-
-  function isTargetTime(forecast) {
-    // TODO => think of a better way to get proper forecast dates and times
-    let date = new Date(forecast.dt * 1000);
-    let forecastHour = date.getHours();
-    let currentHour = getCurrentHour();
-    let currentHourAdjusted = currentHour + 3;
-
-    if (currentHourAdjusted > 23) {
-      currentHourAdjusted -= 24;
-    }
-
-    return forecastHour === currentHourAdjusted ||
-           forecastHour === currentHourAdjusted + 1 ||
-           forecastHour === currentHourAdjusted + 2;
-  }
-
-  function getCurrentHour() {
-    let now = new Date();
-    return now.getHours();
-  }
-
-  function getDayNamesFrom(forecasts) {
-    let days = [];
-    forecasts.forEach(forecast => {
-      let date = new Date(forecast.dt * 1000);
-      let day = getDay(date)
-      if (!days.includes(day)) {
-        days.push(day);
-      };
-    })
-    let formattedDays = format(days);
-    return formattedDays;
-  }
-
-  function format(days) {
-    let formattedDays =
-      days
-      .map(day => {
-        return day.slice(0, 3).toUpperCase();
-      })
-    return formattedDays;
-  }
-
-  function renderForecasted(data, type) {
-    let targetClass = getTargetClassFromData(type);
-    let targetEls = document.querySelectorAll(targetClass);
-    targetEls.forEach((el, index) => {
-      let output = type === 'temps' ? data[index] + Helpers.getDegreesSymbol() : data[index]; // TODO
-      el.textContent = output;
-    });
-  }
-
-  function getTargetClassFromData(type) {
-    return type === 'days' ? '.forecast-weekday' : '.forecast-degrees';
-  }
-
-  function getAvgTempsFrom(forecasts) {
-    let avgTemps = forecasts
-      .map(forecast => {
-        let avgTemp = Math.round(forecast.main.temp);
-        return avgTemp;
-      })
-    return avgTemps;
-  }
-
   function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
   };
+
+  function setCardArea(iconName) { // TODONOW => needs to be called (setCardArea(iconName);); better name
+    let timeOfDay = Helpers.getTimeOfDay();
+    let type = getTypeFrom(timeOfDay, iconName); // TODO => name
+    renderCardAreaFrom(type);
+  };
+
+  function getTypeFrom(timeOfDay, iconName) {
+    let typeObj = {
+      'sun': 'sunny',
+      'cloud': 'cloudy',
+      'cloud-rain': 'rainy',
+      'cloud-drizzle': 'rainy',
+      'cloud-lightning': 'cloudy',
+      'cloud-snow': 'cloudy'
+    };
+    let type; // TODO => name
+
+    if (timeOfDay === 'day') {
+      type = typeObj[iconName];
+    }
+    else {
+      type = timeOfDay;
+    }
+    return type;
+  }
+
+  function renderCardAreaFrom(key) {
+    renderColorsUsing(key);
+    renderHeaderIcon();
+  }
+
+  function renderColorsUsing(key) {
+    let cardColorsObj = {
+      night: {
+        primaryColor: '#fff',
+        secondaryColor: '#2c3e50'
+      },
+      sunny: {
+        primaryColor: '#2c3e50',
+        secondaryColor: '#fcf3d2'
+      },
+      cloudy: {
+        primaryColor: '#2c3e50',
+        secondaryColor: '#ecf0f1'
+      },
+      rainy: {
+        primaryColor: '#fff',
+        secondaryColor: '#3498db'
+      }
+    }
+    document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
+    document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+  }
+
+  function renderHeaderIcon() {
+    let headerIconSvg = Helpers.getSvgFor('clock');
+    let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
+    headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
+  }
+
+}());
+
+// **************************
+// **************************
+
+const DateTime = (function setupDateTime() {
+  const publicAPI = {
+    renderDateTime: renderDateTime,
+    getDay: getDay
+  }
+
+  return publicAPI;
+
+  // **************************
 
   function renderDateTime() { // TODO
     let now = new Date();
@@ -261,104 +232,6 @@ const App = (function setupApp(){
     timeEl.textContent = time;
   }
 
-  function renderIconsFrom(forecasts) {
-    let weatherDescriptions = getWeatherDescriptionsFrom(forecasts);
-    let targetEls = document.querySelectorAll('.forecast-degrees');
-
-    targetEls.forEach((el, index) => {
-      let currentWeatherDesc = weatherDescriptions[index];
-      let iconName = getForecastIconNameFrom(currentWeatherDesc)
-      // iconName = 'cloud-lightning';
-      let svg = getSvgFor(iconName);
-      el.insertAdjacentHTML('beforebegin', svg);
-    })
-  }
-
-  function getWeatherDescriptionsFrom(forecasts) {
-    return forecasts
-             .map(forecast => {
-               return forecast.weather[0].description;
-           });
-  }
-
-  function getForecastIconNameFrom(weatherDescription) {
-    return iconObj.day[weatherDescription] ? iconObj.day[weatherDescription] : 'sun';
-  }
-
-  function setCardArea(iconName) { // TODO => better name
-    let timeOfDay = getTimeOfDay();
-    let type = getTypeFrom(timeOfDay, iconName); // TODO => name
-    renderCardAreaFrom(type);
-  };
-
-  function getTypeFrom(timeOfDay, iconName) {
-    let typeObj = {
-      'sun': 'sunny',
-      'cloud': 'cloudy',
-      'cloud-rain': 'rainy',
-      'cloud-drizzle': 'rainy',
-      'cloud-lightning': 'cloudy',
-      'cloud-snow': 'cloudy'
-    };
-    let type; // TODO => name
-
-    if (timeOfDay === 'day') {
-      type = typeObj[iconName];
-    }
-    else {
-      type = timeOfDay;
-    }
-    return type;
-  }
-
-  function renderCardAreaFrom(key) {
-    renderColorsUsing(key);
-    renderHeaderIcon();
-  }
-
-  function renderColorsUsing(key) {
-    let cardColorsObj = {
-      night: {
-        primaryColor: '#fff',
-        secondaryColor: '#2c3e50'
-      },
-      sunny: {
-        primaryColor: '#2c3e50',
-        secondaryColor: '#fcf3d2'
-      },
-      cloudy: {
-        primaryColor: '#2c3e50',
-        secondaryColor: '#ecf0f1'
-      },
-      rainy: {
-        primaryColor: '#fff',
-        secondaryColor: '#3498db'
-      }
-    }
-    document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
-    document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
-  }
-
-  function renderHeaderIcon() {
-    let headerIconSvg = getSvgFor('clock');
-    let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
-    headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
-  }
-
-  function getSvgFor(iconName) {
-    return feather.icons[iconName].toSvg();
-  }
-
-  function getTimeOfDay() {
-    let hour = getHour();
-    return hour > 7 && hour < 19 ? 'day' : 'night';
-  }
-
-  function getHour() {
-    let now = new Date();
-    return now.getHours();
-  }
-
 }());
 
 // **************************
@@ -394,54 +267,172 @@ async function APICall(position, url) { // TODO => improve Module name
   }
 }
 
-// **************************
-// **************************
-
-const UI = (function renderData() {
+const Data = (function renderData() {
   const publicAPI = {
-    renderCurrentWeather: renderCurrentWeather
+    renderWeatherFrom: renderWeatherFrom,
+    renderForecastFrom: renderForecastFrom,
+    getNextFiveDaysFrom: getNextFiveDaysFrom
   }
 
   return publicAPI;
 
   // **************************
 
-  function renderCurrentWeather(data) { // TODO => modularize this function
+  function renderWeatherFrom(currentWeatherData) { // TODO => modularize this function
     let tempEl = document.querySelector('.weather-today-degrees');
     let windEl = document.querySelector('.weather-today-subtext');
     let cityEl = document.querySelector('.location-area .current-city');
     let countryEl = document.querySelector('.location-area .current-country');
-    let temp = Math.round(data.main.temp);
-    let wind = Math.round(data.wind.speed);
-    let city = data.name;
-    let country = data.sys.country;
+    let temp = Math.round(currentWeatherData.main.temp);
+    let wind = Math.round(currentWeatherData.wind.speed);
+    let city = currentWeatherData.name;
+    let country = currentWeatherData.sys.country;
     windEl.textContent = `${wind}mph`;
     tempEl.textContent = temp + Helpers.getDegreesSymbol();
     cityEl.textContent = `${city}, `;
     countryEl.textContent = country;
   }
+
+  function renderForecastFrom(forecastData) {
+    let fiveDayForecastData = getNextFiveDaysFrom(forecastData);
+    renderDays(fiveDayForecastData);
+  }
+
+  function renderDays(fiveDayForecastData) {
+    let dayNames = getDayNamesFrom(fiveDayForecastData);
+    let avgTemps = getAvgTempsFrom(fiveDayForecastData);
+    renderForecasted(dayNames, 'days');
+    renderForecasted(avgTemps, 'temps');
+  }
+
+  function getNextFiveDaysFrom(data) {
+    let forecastData =
+      data
+      .list
+      .filter(forecast => {
+        return isTargetTime(forecast);
+      })
+
+    if (forecastData.length === 6) {
+      forecastData.shift();
+    }
+
+    return forecastData;
+  }
+
+  function isTargetTime(forecast) {
+    // TODO => think of a better way to get proper forecast dates and times
+    let date = new Date(forecast.dt * 1000);
+    let forecastHour = date.getHours();
+    let currentHour = getCurrentHour();
+    let currentHourAdjusted = currentHour + 3;
+
+    if (currentHourAdjusted > 23) {
+      currentHourAdjusted -= 24;
+    }
+
+    return forecastHour === currentHourAdjusted ||
+           forecastHour === currentHourAdjusted + 1 ||
+           forecastHour === currentHourAdjusted + 2;
+  }
+
+  function getCurrentHour() {
+    let now = new Date();
+    return now.getHours();
+  }
+
+  function getDayNamesFrom(forecasts) {
+    let days = [];
+    forecasts.forEach(forecast => {
+      let date = new Date(forecast.dt * 1000);
+      let day = DateTime.getDay(date)
+      if (!days.includes(day)) {
+        days.push(day);
+      };
+    })
+    let formattedDays = format(days);
+    return formattedDays;
+  }
+
+  function format(days) {
+    let formattedDays =
+      days
+      .map(day => {
+        return day.slice(0, 3).toUpperCase();
+      })
+    return formattedDays;
+  }
+
+  function renderForecasted(data, type) {
+    let targetClass = getTargetClassFromData(type);
+    let targetEls = document.querySelectorAll(targetClass);
+    targetEls.forEach((el, index) => {
+      let output = type === 'temps' ? data[index] + Helpers.getDegreesSymbol() : data[index]; // TODO
+      el.textContent = output;
+    });
+  }
+
+  function getTargetClassFromData(type) {
+    return type === 'days' ? '.forecast-weekday' : '.forecast-degrees';
+  }
+
+  function getAvgTempsFrom(forecasts) {
+    let avgTemps = forecasts
+      .map(forecast => {
+        let avgTemp = Math.round(forecast.main.temp);
+        return avgTemp;
+      })
+    return avgTemps;
+  }
 }());
 
-function Icons(data) {
+// **************************
+// **************************
+
+const Icons = (function renderIcons() {
+  const iconObj = {
+    day: {
+      'clear sky': 'sun',
+      'few clouds': 'sun',
+      'scattered clouds': 'cloud',
+      'broken clouds': 'cloud',
+      'shower rain': 'cloud-rain',
+      'rain': 'cloud-drizzle',
+      'thunderstorm': 'cloud-lightning',
+      'snow': 'cloud-snow',
+      'mist': 'cloud-drizzle'
+    },
+    night: {
+      'clear sky': 'moon',
+      'few clouds': 'moon',
+      'scattered clouds': 'cloud',
+      'broken clouds': 'cloud',
+      'shower rain': 'cloud-rain',
+      'rain': 'cloud-drizzle',
+      'thunderstorm': 'cloud-lightning',
+      'snow': 'cloud-snow',
+      'mist': 'cloud-drizzle'
+    }
+  }
 
   const publicAPI = {
-    setCurrentWeather: setCurrentWeather
+    renderWeatherIconsFrom: renderWeatherIconsFrom,
+    renderForecastIconsFrom: renderForecastIconsFrom
   }
 
   return publicAPI;
 
   // **************************
 
-  function setCurrentWeather() {
+  function renderWeatherIconsFrom(data) {
     let weatherDescription = data.weather[0].description;
-    let timeOfDay = getTimeOfDay();
+    let timeOfDay = Helpers.getTimeOfDay();
     getWeatherIcons(weatherDescription, timeOfDay);
   }
 
   function getWeatherIcons(weatherDescription, timeOfDay) {
     let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
-    let svg = getSvgFor(iconName);
-    setCardArea(iconName);
+    let svg = Helpers.getSvgFor(iconName);
     renderNavIcon(svg);
     renderMainIcon(svg);
   }
@@ -460,6 +451,31 @@ function Icons(data) {
     mainIconEl.insertAdjacentHTML('beforebegin', svg);
   }
 
-}
+  function renderForecastIconsFrom(forecasts) {
+    let fiveDayForecastData = Data.getNextFiveDaysFrom(forecasts);
+    let weatherDescriptions = getWeatherDescriptionsFrom(fiveDayForecastData);
+    let targetEls = document.querySelectorAll('.forecast-degrees');
+
+    targetEls.forEach((el, index) => {
+      let currentWeatherDesc = weatherDescriptions[index];
+      let iconName = getForecastIconNameFrom(currentWeatherDesc)
+      // iconName = 'cloud-lightning';
+      let svg = Helpers.getSvgFor(iconName);
+      el.insertAdjacentHTML('beforebegin', svg);
+    })
+  }
+
+  function getWeatherDescriptionsFrom(forecasts) {
+    return forecasts
+             .map(forecast => {
+               return forecast.weather[0].description;
+           });
+  }
+
+  function getForecastIconNameFrom(weatherDescription) {
+    return iconObj.day[weatherDescription] ? iconObj.day[weatherDescription] : 'sun';
+  }
+
+}());
 
 App.init();
