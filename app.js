@@ -43,13 +43,30 @@ const App = (function setupApp(){
   // **************************
 
   function initApp() {
-    DateTime.renderDateTime();
     getPositionThen(renderData);
     bindUIActions();
+    DateTime.renderDateTime();
   };
 
   function getPositionThen(successFunc) {
     navigator.geolocation.getCurrentPosition(successFunc)
+  }
+
+  async function renderData(position) {
+    startPosition = position; // TODO => find a better place to handle this
+    let currentWeatherData = await getWeatherFrom(position, 'weatherURL', 'fahrenheit');
+    let forecastData = await getWeatherFrom(position, 'forecastURL', 'fahrenheit');
+    Data.renderWeatherFrom(currentWeatherData);
+    Data.renderForecastFrom(forecastData);
+    Icons.renderWeatherIconsFrom(currentWeatherData);
+    Icons.renderForecastIconsFrom(forecastData);
+  };
+
+  async function getWeatherFrom(position, startURL, unit) {
+    let endURL = Helpers[`${startURL}`][`${unit}`];
+    let response = await getAPI(position, endURL);
+    let data = await response.getData();
+    return data;
   }
 
   function bindUIActions() {
@@ -67,23 +84,6 @@ const App = (function setupApp(){
     fahrenheit = !fahrenheit;
   }
 
-  async function renderData(position) {
-    startPosition = position; // TODO => find a better place to handle this
-    let currentWeatherData = await getWeatherFrom(position, 'weatherURL', 'fahrenheit');
-    let forecastData = await getWeatherFrom(position, 'forecastURL', 'fahrenheit');
-    Data.renderWeatherFrom(currentWeatherData);
-    Data.renderForecastFrom(forecastData);
-    Icons.renderWeatherIconsFrom(currentWeatherData);
-    Icons.renderForecastIconsFrom(forecastData);
-  };
-
-  async function getWeatherFrom(position, startURL, unit) {
-    let endURL = Helpers[`${startURL}`][`${unit}`];
-    let call = await API(position, endURL);
-    let data = await call.getData();
-    return data;
-  }
-
   function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
   };
@@ -93,177 +93,7 @@ const App = (function setupApp(){
 // **************************
 // **************************
 
-const Header = (function renderHeaderArea() {
-  const publicAPI = {
-    setHeaderArea: setHeaderArea
-  }
-
-  return publicAPI;
-
-  // **************************
-
-  function setHeaderArea(iconName) { // TODO => better name
-    let timeOfDay = Helpers.getTimeOfDay();
-    let type = getTypeFrom(timeOfDay, iconName); // TODO => name
-    renderHeaderAreaFrom(type);
-  };
-
-  function getTypeFrom(timeOfDay, iconName) {
-    let typeObj = {
-      'sun': 'sunny',
-      'cloud': 'cloudy',
-      'cloud-rain': 'rainy',
-      'cloud-drizzle': 'rainy',
-      'cloud-lightning': 'cloudy',
-      'cloud-snow': 'cloudy'
-    };
-    let type; // TODO => name
-
-    if (timeOfDay === 'day') {
-      type = typeObj[iconName];
-    }
-    else {
-      type = timeOfDay;
-    }
-    return type;
-  }
-
-  function renderHeaderAreaFrom(key) {
-    renderColorsUsing(key);
-    renderHeaderIcon();
-  }
-
-  function renderColorsUsing(key) {
-    let cardColorsObj = {
-      night: {
-        primaryColor: '#fff',
-        secondaryColor: '#2c3e50'
-      },
-      sunny: {
-        primaryColor: '#2c3e50',
-        secondaryColor: '#fcf3d2'
-      },
-      cloudy: {
-        primaryColor: '#2c3e50',
-        secondaryColor: '#ecf0f1'
-      },
-      rainy: {
-        primaryColor: '#fff',
-        secondaryColor: '#3498db'
-      }
-    }
-    document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
-    document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
-  }
-
-  function renderHeaderIcon() {
-    let headerIconSvg = Helpers.getSvgFor('clock');
-    let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
-    headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
-  }
-}());
-
-// **************************
-// **************************
-
-const DateTime = (function setupDateTime() {
-  const publicAPI = {
-    renderDateTime: renderDateTime,
-    getDay: getDay
-  }
-
-  return publicAPI;
-
-  // **************************
-
-  function renderDateTime() { // TODO
-    let now = new Date();
-    setDate(now);
-    setDay(now);
-    setTime(now);
-  };
-
-  function setDate(now) {
-    let date = getDate(now);
-    renderDate(date);
-  }
-
-  function setDay(now) {
-    let day = getDay(now);
-    renderDay(day);
-  }
-
-  function setTime(now) {
-    let time = getTime(now);
-    renderTime(time);
-  }
-
-  function getDate(now) {
-    let date = now.getDate();
-    return addSuffixTo(date);
-  }
-
-  function getDay(now) {
-    let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    let dayNum = now.getDay();
-    let dayName = days[dayNum];
-    return dayName;
-  }
-
-  function getTime(now) {
-    let time =
-      now
-        .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-        .toLowerCase();
-    return time;
-  }
-
-  function addSuffixTo(date) {
-    let suffix = getSuffixOf(date);
-    return date + suffix;
-  }
-
-  function getSuffixOf(date) {
-    let suffix;
-    let remainder = date % 10;
-
-    if (remainder === 1 && date !== 11) {
-      suffix = 'st';
-    }
-    else if (remainder === 2 && date !== 12) {
-      suffix = 'nd';
-    }
-    else if (remainder === 3 && date !== 13) {
-      suffix = 'rd';
-    }
-    else {
-      suffix = 'th';
-    }
-
-    return suffix;
-  }
-
-  function renderDate(date) {
-    let dateEl = document.querySelector('.weather-today-area .weather-today-date')
-    dateEl.textContent = date;
-  }
-
-  function renderDay(day) {
-    let dayEl = document.querySelector('.weather-today-area .weather-today-weekday')
-    dayEl.textContent = day;
-  }
-
-  function renderTime(time) {
-    let timeEl = document.querySelector('.location-and-time-area .time-text');
-    timeEl.textContent = time;
-  }
-
-}());
-
-// **************************
-// **************************
-
-async function API(position, url) { // TODO => improve Module name
+async function getAPI(position, url) { // TODO => improve Module name
   const publicAPI = {
     getData: getData,
     getJSON: getJSON
@@ -504,5 +334,178 @@ const Icons = (function renderIcons() {
   }
 
 }());
+
+// **************************
+// **************************
+
+const Header = (function renderHeaderArea() {
+  const publicAPI = {
+    setHeaderArea: setHeaderArea
+  }
+
+  return publicAPI;
+
+  // **************************
+
+  function setHeaderArea(iconName) { // TODO => better name
+    let timeOfDay = Helpers.getTimeOfDay();
+    let type = getTypeFrom(timeOfDay, iconName); // TODO => name
+    renderHeaderAreaFrom(type);
+  };
+
+  function getTypeFrom(timeOfDay, iconName) {
+    let typeObj = {
+      'sun': 'sunny',
+      'cloud': 'cloudy',
+      'cloud-rain': 'rainy',
+      'cloud-drizzle': 'rainy',
+      'cloud-lightning': 'cloudy',
+      'cloud-snow': 'cloudy'
+    };
+    let type; // TODO => name
+
+    if (timeOfDay === 'day') {
+      type = typeObj[iconName];
+    }
+    else {
+      type = timeOfDay;
+    }
+    return type;
+  }
+
+  function renderHeaderAreaFrom(key) {
+    renderColorsUsing(key);
+    renderHeaderIcon();
+  }
+
+  function renderColorsUsing(key) {
+    let cardColorsObj = {
+      night: {
+        primaryColor: '#fff',
+        secondaryColor: '#2c3e50'
+      },
+      sunny: {
+        primaryColor: '#2c3e50',
+        secondaryColor: '#fcf3d2'
+      },
+      cloudy: {
+        primaryColor: '#2c3e50',
+        secondaryColor: '#ecf0f1'
+      },
+      rainy: {
+        primaryColor: '#fff',
+        secondaryColor: '#3498db'
+      }
+    }
+    document.documentElement.style.setProperty('--secondaryColor', cardColorsObj[key].secondaryColor);
+    document.documentElement.style.setProperty('--primaryColor', cardColorsObj[key].primaryColor);
+  }
+
+  function renderHeaderIcon() {
+    let headerIconSvg = Helpers.getSvgFor('clock');
+    let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
+    headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
+  }
+}());
+
+// **************************
+// **************************
+
+const DateTime = (function setupDateTime() {
+  const publicAPI = {
+    renderDateTime: renderDateTime,
+    getDay: getDay
+  }
+
+  return publicAPI;
+
+  // **************************
+
+  function renderDateTime() { // TODO
+    let now = new Date();
+    setDate(now);
+    setDay(now);
+    setTime(now);
+  };
+
+  function setDate(now) {
+    let date = getDate(now);
+    renderDate(date);
+  }
+
+  function setDay(now) {
+    let day = getDay(now);
+    renderDay(day);
+  }
+
+  function setTime(now) {
+    let time = getTime(now);
+    renderTime(time);
+  }
+
+  function getDate(now) {
+    let date = now.getDate();
+    return addSuffixTo(date);
+  }
+
+  function getDay(now) {
+    let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    let dayNum = now.getDay();
+    let dayName = days[dayNum];
+    return dayName;
+  }
+
+  function getTime(now) {
+    let time =
+      now
+        .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+        .toLowerCase();
+    return time;
+  }
+
+  function addSuffixTo(date) {
+    let suffix = getSuffixOf(date);
+    return date + suffix;
+  }
+
+  function getSuffixOf(date) {
+    let suffix;
+    let remainder = date % 10;
+
+    if (remainder === 1 && date !== 11) {
+      suffix = 'st';
+    }
+    else if (remainder === 2 && date !== 12) {
+      suffix = 'nd';
+    }
+    else if (remainder === 3 && date !== 13) {
+      suffix = 'rd';
+    }
+    else {
+      suffix = 'th';
+    }
+
+    return suffix;
+  }
+
+  function renderDate(date) {
+    let dateEl = document.querySelector('.weather-today-area .weather-today-date')
+    dateEl.textContent = date;
+  }
+
+  function renderDay(day) {
+    let dayEl = document.querySelector('.weather-today-area .weather-today-weekday')
+    dayEl.textContent = day;
+  }
+
+  function renderTime(time) {
+    let timeEl = document.querySelector('.location-and-time-area .time-text');
+    timeEl.textContent = time;
+  }
+
+}());
+
+// **************************
+// **************************
 
 App.init();
