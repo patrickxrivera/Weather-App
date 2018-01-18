@@ -1,22 +1,34 @@
 const Helpers = {
-  weatherURL: 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
-  forecastURL: 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
+  weatherURL: {
+    fahrenheit: 'https://api.openweathermap.org/data/2.5/weather?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
+    celsius: 'https://api.openweathermap.org/data/2.5/weather?units=metric&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  },
+  forecastURL: {
+    fahrenheit: 'https://api.openweathermap.org/data/2.5/forecast?units=imperial&mode=json&appid=e7819a0645bb3723fbfe223ad074c870',
+    celsius: 'https://api.openweathermap.org/data/2.5/forecast?units=metric&mode=json&appid=e7819a0645bb3723fbfe223ad074c870'
+  },
 
   getDegreesSymbol() {
     return String.fromCharCode(176);
   },
+
   getTimeOfDay() {
     let hour = this.getHour();
     return hour > 7 && hour < 19 ? 'day' : 'night';
   },
+
   getHour() {
     let now = new Date();
     return now.getHours();
   },
+
   getSvgFor(iconName) {
     return feather.icons[iconName].toSvg();
   }
 };
+
+// **************************
+// **************************
 
 const App = (function setupApp(){
   let fahrenheit = true;
@@ -31,10 +43,14 @@ const App = (function setupApp(){
   // **************************
 
   function initApp() {
-    bindUIActions();
     DateTime.renderDateTime();
-    navigator.geolocation.getCurrentPosition(getCurrent, error);
+    getPositionThen(renderData);
+    bindUIActions();
   };
+
+  function getPositionThen(successFunc) {
+    navigator.geolocation.getCurrentPosition(successFunc)
+  }
 
   function bindUIActions() {
     const slider = document.querySelector('.slider');
@@ -42,31 +58,28 @@ const App = (function setupApp(){
   }
 
   async function toggleUnit() {
-    let weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
-    let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?mode=json&appid=e7819a0645bb3723fbfe223ad074c870';
     let unit;
-    fahrenheit ? unit = 'metric' : unit = 'imperial';
-    weatherUrl += `&units=${unit}`;
-    forecastUrl += `&units=${unit}`;
-    let weatherData = await getData(startPosition, weatherUrl);
-    let forecastData = await getData(startPosition, forecastUrl);
-    renderWeather(weatherData);
-    renderDays(forecastData);
+    fahrenheit ? unit = 'celsius' : unit = 'fahrenheit';
+    let currentWeatherData = await getWeatherFrom(startPosition, 'weatherURL', unit);
+    let forecastData = await getWeatherFrom(startPosition, 'forecastURL', unit);
+    Data.renderWeatherFrom(currentWeatherData);
+    Data.renderForecastFrom(forecastData);
     fahrenheit = !fahrenheit;
   }
 
-  async function getCurrent(position) {
-    let currentWeatherData = await getWeatherFrom(position, 'weatherURL');
-    let forecastData = await getWeatherFrom(position, 'forecastURL');
+  async function renderData(position) {
+    startPosition = position; // TODO => find a better place to handle this
+    let currentWeatherData = await getWeatherFrom(position, 'weatherURL', 'fahrenheit');
+    let forecastData = await getWeatherFrom(position, 'forecastURL', 'fahrenheit');
     Data.renderWeatherFrom(currentWeatherData);
     Data.renderForecastFrom(forecastData);
     Icons.renderWeatherIconsFrom(currentWeatherData);
     Icons.renderForecastIconsFrom(forecastData);
   };
 
-  async function getWeatherFrom(position, startUrl) {
-    let endUrl = Helpers[`${startUrl}`];
-    let call = await APICall(position, endUrl);
+  async function getWeatherFrom(position, startURL, unit) {
+    let endURL = Helpers[`${startURL}`][`${unit}`];
+    let call = await API(position, endURL);
     let data = await call.getData();
     return data;
   }
@@ -75,10 +88,24 @@ const App = (function setupApp(){
     console.warn(`ERROR(${err.code}): ${err.message}`);
   };
 
-  function setCardArea(iconName) { // TODONOW => needs to be called (setCardArea(iconName);); better name
+}());
+
+// **************************
+// **************************
+
+const Header = (function renderHeaderArea() {
+  const publicAPI = {
+    setHeaderArea: setHeaderArea
+  }
+
+  return publicAPI;
+
+  // **************************
+
+  function setHeaderArea(iconName) { // TODO => better name
     let timeOfDay = Helpers.getTimeOfDay();
     let type = getTypeFrom(timeOfDay, iconName); // TODO => name
-    renderCardAreaFrom(type);
+    renderHeaderAreaFrom(type);
   };
 
   function getTypeFrom(timeOfDay, iconName) {
@@ -101,7 +128,7 @@ const App = (function setupApp(){
     return type;
   }
 
-  function renderCardAreaFrom(key) {
+  function renderHeaderAreaFrom(key) {
     renderColorsUsing(key);
     renderHeaderIcon();
   }
@@ -134,7 +161,6 @@ const App = (function setupApp(){
     let headerIconEl = document.querySelector('.location-and-time-area .time-icon');
     headerIconEl.insertAdjacentHTML('afterbegin', headerIconSvg);
   }
-
 }());
 
 // **************************
@@ -237,7 +263,7 @@ const DateTime = (function setupDateTime() {
 // **************************
 // **************************
 
-async function APICall(position, url) { // TODO => improve Module name
+async function API(position, url) { // TODO => improve Module name
   const publicAPI = {
     getData: getData,
     getJSON: getJSON
@@ -250,8 +276,8 @@ async function APICall(position, url) { // TODO => improve Module name
   async function getData() {
     let lat = position.coords.latitude;
     let lon = position.coords.longitude;
-    let currentLocationUrl = `${url}&lat=${lat}&lon=${lon}`;
-    let data = await getJSON(currentLocationUrl);
+    let currentLocationURL = `${url}&lat=${lat}&lon=${lon}`;
+    let data = await getJSON(currentLocationURL);
     return data;
   }
 
@@ -265,7 +291,7 @@ async function APICall(position, url) { // TODO => improve Module name
       console.warn('Error', e);
     }
   }
-}
+};
 
 const Data = (function renderData() {
   const publicAPI = {
@@ -433,6 +459,7 @@ const Icons = (function renderIcons() {
   function getWeatherIcons(weatherDescription, timeOfDay) {
     let iconName = getWeatherIconNameFrom(weatherDescription, timeOfDay);
     let svg = Helpers.getSvgFor(iconName);
+    Header.setHeaderArea(iconName);
     renderNavIcon(svg);
     renderMainIcon(svg);
   }
