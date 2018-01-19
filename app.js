@@ -36,6 +36,7 @@ const App = (function setupApp(){
 
   const publicAPI = {
     init: initApp,
+    getFahrenheit: getFahrenheit
   }
 
   return publicAPI;
@@ -60,7 +61,7 @@ const App = (function setupApp(){
     Data.renderForecastFrom(forecastData);
     Icons.renderWeatherIconsFrom(currentWeatherData);
     Icons.renderForecastIconsFrom(forecastData);
-    Animations.run();
+    Animations.runAtStart();
   };
 
   async function getWeatherFrom(position, startURL, unit) {
@@ -78,11 +79,16 @@ const App = (function setupApp(){
   async function toggleUnit() {
     let unit;
     fahrenheit ? unit = 'celsius' : unit = 'fahrenheit';
+    fahrenheit = !fahrenheit;
     let currentWeatherData = await getWeatherFrom(startPosition, 'weatherURL', unit);
     let forecastData = await getWeatherFrom(startPosition, 'forecastURL', unit);
     Data.renderWeatherFrom(currentWeatherData);
     Data.renderForecastFrom(forecastData);
-    fahrenheit = !fahrenheit;
+    Animations.runAtToggle()
+  }
+
+  function getFahrenheit() {
+    return fahrenheit;
   }
 
   function error(err) {
@@ -144,7 +150,9 @@ const Data = (function renderData() {
     let wind = Math.round(currentWeatherData.wind.speed);
     let city = currentWeatherData.name;
     let country = currentWeatherData.sys.country;
-    windEl.textContent = `${wind}mph`;
+    let isFahrenheit = App.getFahrenheit();
+    let unit = isFahrenheit ? 'mph' : 'mps';
+    windEl.textContent = `${wind}${unit}`;
     tempEl.textContent = temp + Helpers.getDegreesSymbol();
     cityEl.textContent = `${city}, `;
     countryEl.textContent = country;
@@ -187,10 +195,8 @@ const Data = (function renderData() {
     if (currentHourAdjusted > 23) {
       currentHourAdjusted -= 24;
     }
-
-    return forecastHour === currentHourAdjusted ||
-           forecastHour === currentHourAdjusted + 1 ||
-           forecastHour === currentHourAdjusted + 2;
+    
+    return forecastHour === currentHourAdjusted || forecastHour === currentHourAdjusted + 1 || forecastHour === currentHourAdjusted + 2;
   }
 
   function getCurrentHour() {
@@ -512,14 +518,15 @@ const DateTime = (function setupDateTime() {
 const Animations = (function() {
 
   const publicAPI = {
-    run: run
+    runAtStart: runAtStart,
+    runAtToggle: runAtToggle
   }
 
   return publicAPI;
 
   // **************************
 
-  function run() {
+  function runAtStart() {
     const mainContainer = document.querySelector('.main-container');
     const currentWeatherArea = document.querySelector('.center-experiment');
     const forecastArea = document.querySelectorAll('.forecast-area');
@@ -530,6 +537,34 @@ const Animations = (function() {
       el.classList.add('animated', 'fadeIn');
     })
   }
+
+  function runAtToggle() {
+    const currentWeatherDegrees = document.querySelector('.weather-today-degrees');
+    const currentWeatherWind = document.querySelector('.weather-today-subtext');
+    const forecastWeekday = document.querySelectorAll('.forecast-weekday');
+    const forecastDegrees = document.querySelectorAll('.forecast-degrees');
+    currentWeatherDegrees.classList.add('animated', 'fadeIn');
+    currentWeatherDegrees.addEventListener('animationend', () => {
+      currentWeatherDegrees.classList.remove('fadeIn');
+    });
+    currentWeatherWind.classList.add('animated', 'fadeIn');
+    currentWeatherWind.addEventListener('animationend', () => {
+      currentWeatherWind.classList.remove('fadeIn');
+    });
+    forecastWeekday.forEach(forecast => {
+      forecast.classList.add('animated', 'fadeIn');
+      forecast.addEventListener('animationend', () => {
+        forecast.classList.remove('fadeIn');
+      });
+    });
+    forecastDegrees.forEach(forecast => {
+      forecast.classList.add('animated', 'fadeIn');
+      forecast.addEventListener('animationend', () => {
+        forecast.classList.remove('fadeIn');
+      });
+    });
+  }
+
 }())
 
 // **************************

@@ -348,6 +348,10 @@ input:checked + .slider .off
 }
 
 .fadeIn {
+  animation: 0.1s ease-in 0.05s;
+}
+
+.forecastArea .fadeIn {
   animation: 1.4s ease-in 0.7s;
 }
 
