@@ -196,6 +196,8 @@ const Data = (function renderData() {
       currentHourAdjusted -= 24;
     }
 
+    // console.log({currentHourAdjusted, forecastHour});
+
     return forecastHour === currentHourAdjusted || forecastHour === currentHourAdjusted + 1 || forecastHour === currentHourAdjusted + 2;
   }
 
@@ -541,7 +543,6 @@ const Animations = (function() {
   function runAtToggle() {
     const currentWeatherDegrees = document.querySelector('.weather-today-degrees');
     const currentWeatherWind = document.querySelector('.weather-today-subtext');
-    const forecastWeekday = document.querySelectorAll('.forecast-weekday');
     const forecastDegrees = document.querySelectorAll('.forecast-degrees');
     currentWeatherDegrees.classList.add('animated', 'fadeIn');
     currentWeatherDegrees.addEventListener('animationend', () => {
@@ -550,12 +551,6 @@ const Animations = (function() {
     currentWeatherWind.classList.add('animated', 'fadeIn');
     currentWeatherWind.addEventListener('animationend', () => {
       currentWeatherWind.classList.remove('fadeIn');
-    });
-    forecastWeekday.forEach(forecast => {
-      forecast.classList.add('animated', 'fadeIn');
-      forecast.addEventListener('animationend', () => {
-        forecast.classList.remove('fadeIn');
-      });
     });
     forecastDegrees.forEach(forecast => {
       forecast.classList.add('animated', 'fadeIn');
