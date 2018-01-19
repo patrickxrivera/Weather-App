@@ -195,7 +195,7 @@ const Data = (function renderData() {
     if (currentHourAdjusted > 23) {
       currentHourAdjusted -= 24;
     }
-    
+
     return forecastHour === currentHourAdjusted || forecastHour === currentHourAdjusted + 1 || forecastHour === currentHourAdjusted + 2;
   }
 
