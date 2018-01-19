@@ -520,8 +520,11 @@ const Animations = (function() {
   // **************************
 
   function run() {
+    const mainContainer = document.querySelector('.main-container');
     const currentWeatherArea = document.querySelector('.center-experiment');
     const forecastArea = document.querySelectorAll('.forecast-area');
+    mainContainer.classList.remove('hide-container');
+    mainContainer.classList.add('show-container');
     currentWeatherArea.classList.add('animated', 'fadeInLeft');
     forecastArea.forEach(el => {
       el.classList.add('animated', 'fadeIn');
