@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Random Quote Machine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lustria" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  </head>
+  <body>
+
+    <div class="main-container hide-container">
+      <!-- <div class="content-container"> -->
+
+        <section class="location-and-time-area">
+          <div class="location-area">
+            <div class="location">
+              <span class="current-city">Tallahassee, </span>
+              <span class="current-country">FL</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="togBtn">
+              <div class="slider round"><!--ADDED HTML -->
+                <span class="on">&degC</span>
+                <span class="off">&degF</span>
+                <!--END-->
+              </div>
+            </label>
+          </div>
+          <div class="time-area">
+            <div class="time-icon">
+            </div>
+            <div class="time-text">
+              11:12 am
+            </div>
+          </div>
+        </section>
+
+        <section class="nav-area">
+
+          <div class="nav-section-area weather-area">
+            <span class="nav-section-mid-area"></span>
+            <span >Weather</span>
+          </div>
+
+          <div class="nav-section-area news-and-events-area">
+            <i data-feather="map" class="map nav-text"></i>
+            <span class="nav-section-mid-area"></span>
+            <span class="nav-text">News & Events</span>
+          </div>
+
+          <div class="nav-section-area gallery-area">
+            <i data-feather="camera" class="camera nav-text"></i>
+            <span class="nav-section-mid-area"></span>
+            <span class="nav-text">Gallery</span>
+          </div>
+
+        </section>
+
+        <section class="weather-today-area">
+          <div class="center-experiment"> <!-- TODO -->
+            <div class="weather-today"> <!-- TODO -->
+              <span class="weather-today-degrees"></span>
+              <span class="weather-today-left-area"> <!-- TODO -->
+                <span class="weather-today-weekday"></span>
+                <span class="weather-today-date"></span>
+              </span>
+            </div>
+            <span class="weather-today-gutter"></span>
+            <div class="weather-today"> <!-- TODO -->
+              <span class="weather-today-subtext"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="forecast-first-three">
+          <div class="forecast-area"> <!-- TO DO -->
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
+          </div>
+
+          <div class="forecast-area"> <!-- TO DO -->
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
+          </div>
+
+          <div class="forecast-area"> <!-- TO DO -->
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
+          </div>
+        </section>
+
+        <section class="forecast-last-two">
+
+          <div class="forecast-area"> <!-- TO DO -->
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
+          </div>
+
+          <span class="forecast-gutter"></span>
+
+          <div class="forecast-area"> <!-- TO DO -->
+            <span class="forecast-weekday"></span>
+            <i class="weather-icon"></i>
+            <span class="forecast-degrees"></span>
+          </div>
+
+        </section>
+
+      <!-- </div> <!-- content container -->
+
+    </div> <!-- main container -->
+
+    <script type="text/javascript" src="../bundle.js"></script>
+
+  </body>
+</html>
