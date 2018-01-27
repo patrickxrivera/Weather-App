@@ -102,8 +102,8 @@ const App = (function setupApp(){
 
 async function getAPI(position, url) { // TODO => improve Module name
   const publicAPI = {
-    getData: getData,
-    getJSON: getJSON
+    getData,
+    getJSON
   }
 
   return publicAPI;
@@ -129,6 +129,17 @@ async function getAPI(position, url) { // TODO => improve Module name
     }
   }
 };
+
+async function getJSON(url) {
+  try {
+    let response = await fetch(url);
+    let data = await response.json();
+    return data;
+  }
+  catch(err) {
+    console.warn('Error', err);
+  }
+}
 
 const Data = (function renderData() {
   const publicAPI = {
@@ -190,12 +201,12 @@ const Data = (function renderData() {
     let date = new Date(forecast.dt * 1000);
     let forecastHour = date.getHours();
     let currentHour = getCurrentHour();
-    let currentHourAdjusted = currentHour + 3;
+    let currentHourAdjusted = currentHour;
 
     if (currentHourAdjusted > 23) {
       currentHourAdjusted -= 24;
     }
-    
+
     return forecastHour === currentHourAdjusted || forecastHour === currentHourAdjusted + 1 || forecastHour === currentHourAdjusted + 2;
   }
 
@@ -259,7 +270,9 @@ const Icons = (function renderIcons() {
       'few clouds': 'sun',
       'scattered clouds': 'cloud',
       'broken clouds': 'cloud',
+      'overcast clouds': 'cloud',
       'shower rain': 'cloud-rain',
+      'light rain': 'cloud-drizzle',
       'rain': 'cloud-drizzle',
       'thunderstorm': 'cloud-lightning',
       'snow': 'cloud-snow',
@@ -270,7 +283,9 @@ const Icons = (function renderIcons() {
       'few clouds': 'moon',
       'scattered clouds': 'cloud',
       'broken clouds': 'cloud',
+      'overcast clouds': 'cloud',
       'shower rain': 'cloud-rain',
+      'light rain': 'cloud-drizzle',
       'rain': 'cloud-drizzle',
       'thunderstorm': 'cloud-lightning',
       'snow': 'cloud-snow',
@@ -534,7 +549,7 @@ const Animations = (function() {
     mainContainer.classList.add('show-container');
     currentWeatherArea.classList.add('animated', 'fadeInLeft');
     forecastArea.forEach(el => {
-      el.classList.add('animated', 'fadeIn');
+      el.classList.add('animated', 'fadeIn', 'test');
     })
   }
 
@@ -543,24 +558,18 @@ const Animations = (function() {
     const currentWeatherWind = document.querySelector('.weather-today-subtext');
     const forecastWeekday = document.querySelectorAll('.forecast-weekday');
     const forecastDegrees = document.querySelectorAll('.forecast-degrees');
-    currentWeatherDegrees.classList.add('animated', 'fadeIn');
+    currentWeatherDegrees.classList.add('fade');
     currentWeatherDegrees.addEventListener('animationend', () => {
-      currentWeatherDegrees.classList.remove('fadeIn');
+      currentWeatherDegrees.classList.remove('fade');
     });
-    currentWeatherWind.classList.add('animated', 'fadeIn');
+    currentWeatherWind.classList.add('fade', 'fade');
     currentWeatherWind.addEventListener('animationend', () => {
-      currentWeatherWind.classList.remove('fadeIn');
-    });
-    forecastWeekday.forEach(forecast => {
-      forecast.classList.add('animated', 'fadeIn');
-      forecast.addEventListener('animationend', () => {
-        forecast.classList.remove('fadeIn');
-      });
+      currentWeatherWind.classList.remove('fade');
     });
     forecastDegrees.forEach(forecast => {
-      forecast.classList.add('animated', 'fadeIn');
+      forecast.classList.add('fade', 'fade');
       forecast.addEventListener('animationend', () => {
-        forecast.classList.remove('fadeIn');
+        forecast.classList.remove('fade');
       });
     });
   }
