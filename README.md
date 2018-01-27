@@ -22,9 +22,10 @@ Check it out: https://animated-weather-app.herokuapp.com
 
 * Vanilla JS 
 * Express
-* CSS3 (Animations)
+* CSS3 (Animations and Flexbox)
 * HTML
 
 ## Process
 ## Inspiration
 These animations on Dribble 
+![Layout-Dribbble](https://dribbble.com/shots/2466585-Daily-UI-challenge-037-Weather)
