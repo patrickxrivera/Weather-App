@@ -28,4 +28,4 @@ Check it out: https://animated-weather-app.herokuapp.com
 ## Process
 ## Inspiration
 These animations on Dribble 
-![Layout-Dribbble](https://dribbble.com/shots/2466585-Daily-UI-challenge-037-Weather)
+![Layout-Dribbble](https://s3.us-east-2.amazonaws.com/fcc-weather-app/weather-layout.png)
