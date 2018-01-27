@@ -4,3 +4,11 @@
 Check it out: https://animated-weather-app.herokuapp.com
 
 ![App-Gif](https://s3.us-east-2.amazonaws.com/fcc-weather-app/weather-app.gif)
+
+## Table of Contents 
+- [Purpose](#purpose)
+- [Technologies](#technologies)
+- [Process](#architecture)
+  - [Inspiration](#inspiration)
+  - [Wireframe](#wireframe)
+  - [Prototype](#prototype)
