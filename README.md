@@ -27,5 +27,10 @@ Check it out: https://animated-weather-app.herokuapp.com
 
 ## Process
 ## Inspiration
-These animations on Dribble 
+
+I loved the minimalism of this layout and the vibrancy of the colors. Ended up modeling the card style layout after this.
+
 ![Layout-Dribbble](https://s3.us-east-2.amazonaws.com/fcc-weather-app/weather-layout.png)
+
+Smoooth. Really liked how they presented the large icon first and faded the other ones in sequentially. Adapted these animations as well.
+![Animations-Dribbble](https://s3.us-east-2.amazonaws.com/fcc-weather-app/weather3.gif)
