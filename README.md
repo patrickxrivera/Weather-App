@@ -8,7 +8,23 @@ Check it out: https://animated-weather-app.herokuapp.com
 ## Table of Contents 
 - [Purpose](#purpose)
 - [Technologies](#technologies)
-- [Process](#architecture)
+- [Process](#process)
   - [Inspiration](#inspiration)
   - [Wireframe](#wireframe)
   - [Prototype](#prototype)
+
+## Purpose
+
+* Learn how to create snazzy animations. 
+* Practice using the revealing module pattern in JS.
+
+## Technologies
+
+* Vanilla JS 
+* Express
+* CSS3 (Animations)
+* HTML
+
+## Process
+## Inspiration
+These animations on Dribble 
