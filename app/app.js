@@ -201,13 +201,22 @@ const Data = (function renderData() {
     let date = new Date(forecast.dt * 1000);
     let forecastHour = date.getHours();
     let currentHour = getCurrentHour();
-    let currentHourAdjusted = currentHour;
+    let currentHourAdjusted = currentHour + 3;
+    let firstLookup, secondLookup, thirdLookup;
 
-    if (currentHourAdjusted > 23) {
-      currentHourAdjusted -= 24;
+    if (currentHourAdjusted < 23) {
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, currentHourAdjusted];
+    }
+    else if (currentHourAdjusted === 23) {
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, 0];
+    }
+    else {
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, 0, 1];
     }
 
-    return forecastHour === currentHourAdjusted || forecastHour === currentHourAdjusted + 1 || forecastHour === currentHourAdjusted + 2;
+    return forecastHour === firstLookup ||
+           forecastHour === secondLookup + 1 ||
+           forecastHour === thirdLookup + 2;
   }
 
   function getCurrentHour() {
