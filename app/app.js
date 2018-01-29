@@ -208,15 +208,17 @@ const Data = (function renderData() {
       [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, currentHourAdjusted];
     }
     else if (currentHourAdjusted === 23) {
-      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, 0];
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, 1];
     }
     else {
-      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, 0, 1];
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, 1, 2];
     }
 
+    console.log({forecastHour, firstLookup});
+
     return forecastHour === firstLookup ||
-           forecastHour === secondLookup + 1 ||
-           forecastHour === thirdLookup + 2;
+           forecastHour === secondLookup ||
+           forecastHour === thirdLookup;
   }
 
   function getCurrentHour() {
