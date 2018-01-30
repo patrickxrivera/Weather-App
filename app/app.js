@@ -205,7 +205,7 @@ const Data = (function renderData() {
     let firstLookup, secondLookup, thirdLookup;
 
     if (currentHourAdjusted < 23) {
-      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, currentHourAdjusted];
+      [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted + 1, currentHourAdjusted + 2];
     }
     else if (currentHourAdjusted === 23) {
       [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, currentHourAdjusted, 1];
@@ -213,8 +213,6 @@ const Data = (function renderData() {
     else {
       [firstLookup, secondLookup, thirdLookup] = [currentHourAdjusted, 1, 2];
     }
-
-    console.log({forecastHour, firstLookup});
 
     return forecastHour === firstLookup ||
            forecastHour === secondLookup ||
