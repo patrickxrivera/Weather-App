@@ -20,10 +20,10 @@ Check it out: https://animated-weather-app.herokuapp.com
 
 ## Technologies
 
-* Vanilla JS 
-* Express
+* JavaScript 
 * CSS3 (Animations and Flexbox)
-* HTML
+* Open Weather Map API
+* Express
 
 ## Process
 ## Inspiration
