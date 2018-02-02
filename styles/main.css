@@ -372,3 +372,12 @@ input:checked + .slider .off
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* @media (max-width: 769px) {
+  .nav-area {
+    font-size: 0.7rem;
+  }
+  .news-and-events-area {
+    margin: 0 0.3rem;
+  }
+} */
