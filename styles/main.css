@@ -113,7 +113,7 @@
   min-width: 30%;
   min-height: 5rem;
   justify-content: center;
-  padding: .75rem 0;
+  padding: 0.75rem 0;
 }
 
 .forecast-area img,
@@ -166,7 +166,9 @@ body {
   height: 34px;
 }
 
-.switch input {display:none;}
+.switch input {
+  display: none;
+}
 
 .slider {
   position: absolute;
@@ -176,32 +178,32 @@ body {
   right: 0;
   bottom: 0;
   background-color: #fff;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 26px;
   width: 26px;
   left: 4px;
   bottom: 4px;
   background-color: #7f8c8d;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 26px;
   width: 26px;
   left: 4px;
   bottom: 4px;
   background-color: var(--toggleColor);
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -209,7 +211,7 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 input:checked + .slider:before {
@@ -219,40 +221,40 @@ input:checked + .slider:before {
 }
 
 /*------ ADDED CSS ---------*/
-.on
-{
+.on {
   display: none;
 }
 
-.on, .off {
-  font-weight: bold;
+.on,
+.off {
+  font-weight:  bold;
   color: var(--toggleColor);
   position: absolute;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
   /* font-size: 10px; */
   /* font-family: Verdana, sans-serif; */
 }
 
+input:checked + .slider .on {
+  display: block;
+}
 
-
-input:checked+ .slider .on
-{display: block;}
-
-input:checked + .slider .off
-{display: none;}
+input:checked + .slider .off {
+  display: none;
+}
 
 /*--------- END --------*/
 
 /* Rounded sliders */
 .slider.round {
   border-radius: 34px;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 .slider.round:hover {
-  opacity: 1;;
+  opacity: 1;
 }
 
 /* @keyframes toggleHover {
@@ -277,7 +279,7 @@ input:checked + .slider .off
 .main-container {
   border: 0 solid #eaf1f3;
   border-radius: 0.5rem;
-  box-shadow: rgba(23,43,99,0.26) 0 7px 42px;
+  box-shadow: rgba(23, 43, 99, 0.26) 0 7px 42px;
 }
 
 .location-and-time-area {
@@ -328,7 +330,6 @@ input:checked + .slider .off
 }
 
 .forecast-weekday {
-  background-color: rgba(189, 195, 199, 0.4);
   border-radius: 0.25rem;
   padding: 0.3rem;
   font-size: 0.75rem;
@@ -344,11 +345,11 @@ input:checked + .slider .off
 
 /* Animations */
 .fadeInLeft {
-  animation: 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);;
+  animation: 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .fadeIn {
-  animation: 0.1s ease-in .8s;
+  animation: 0.1s ease-in 0.8s;
 }
 
 .hide-container {
@@ -360,8 +361,12 @@ input:checked + .slider .off
 }
 
 @keyframes reveal {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .fade {
@@ -369,15 +374,10 @@ input:checked + .slider .off
 }
 
 @keyframes fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
-/* @media (max-width: 769px) {
-  .nav-area {
-    font-size: 0.7rem;
-  }
-  .news-and-events-area {
-    margin: 0 0.3rem;
-  }
-} */
